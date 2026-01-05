@@ -19,15 +19,15 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ./../  # Build from the frontend folder in the root directory
-      dockerfile: Dockerfile_frontend  # Ensure the correct Dockerfile is used
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/frontend  # Mount the frontend folder into the container
-    # stdin_open: true
-    # tty: true
-   # command: sleep infinity  # Keep the container running
+# frontend:
+#     build:
+#       context: ./../  # Build from the frontend folder in the root directory
+#       dockerfile: Dockerfile_frontend  # Ensure the correct Dockerfile is used
+#     container_name: frontend
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./frontend:/frontend # Mount the frontend folder into the container
+#     # stdin_open: true
+#     # tty: true
+#    # command: sleep infinity  # Keep the container running
