@@ -12,7 +12,7 @@ services:
     env_file:          # Local .env (ignored by Git)
       - .env
     volumes:
-      - ./backend:/app  # Hot reload
+      - ["./backend:/workspaces/Rand-A-Pizza/backend"]
     environment:  # GitHub Secrets (Render)
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
