@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Header, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import os
 from pydantic import BaseModel
 from typing import List
 import random
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="Rand-A-Pizza API")
 
@@ -43,7 +46,7 @@ class PizzaRecipe(BaseModel):
 
 @app.get("/api/ingredients")
 def get_ingredients():
-    data = supabase.table("ingredients").select("category,name").execute()
+    data = supabase.table("ingreds").select("category,name").execute()
     toppings = [row["name"] for row in data.data if row["category"] == "toppings"]
     cheeses = [row["name"] for row in data.data if row["category"] == "cheeses"]
     doughs = [row["name"] for row in data.data if row["category"] == "doughs"]
