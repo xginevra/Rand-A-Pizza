@@ -13,9 +13,9 @@ services:
       - .env
     volumes:
       - ./backend:/app  # Hot reload
-    environment:       # GitHub Secrets override (production)
-      - SUPABASE_URL
-      - SUPABASE_KEY
+    environment:  # GitHub Secrets (Render)
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     restart: unless-stopped
 
