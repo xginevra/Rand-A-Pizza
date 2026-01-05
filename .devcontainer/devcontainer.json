@@ -1,0 +1,10 @@
+{
+    "name": "BoozeOrNo",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "backend",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "forwardPorts": [3000, 8000],
+    "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+    }
+}
