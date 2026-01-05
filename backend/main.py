@@ -7,14 +7,20 @@ from typing import List
 import random
 from dotenv import load_dotenv
 
-load_dotenv()
-
 app = FastAPI(title="Rand-A-Pizza API")
+
+load_dotenv()
 
 @app.middleware("http")
 async def add_csp_header(request: Request, call_next):
     response: Response = await call_next(request)
-    response.headers["Content-Security-Policy"] = "img-src 'self' https://*.supabase.co data: https:;"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "img-src 'self' https://*.supabase.co data: https:; "
+        "style-src 'self' 'unsafe-inline'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "connect-src 'self' https://*.supabase.co;"
+    )
     return response
 
 # CORS for frontend
@@ -27,8 +33,12 @@ app.add_middleware(
 )
 
 # Supabase setup (uses your existing env vars)
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# Debug output
+print(f"DEBUG - SUPABASE_URL: '{SUPABASE_URL}'")
+print(f"DEBUG - SUPABASE_KEY length: {len(SUPABASE_KEY)}")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
@@ -55,25 +65,49 @@ def get_ingredients():
 
 @app.post("/api/random-pizza")
 def random_pizza(request: IngredientsRequest):
-    ingredients = get_ingredients()
+    ingredients_data = get_ingredients()
+    
+    # Combine all ingredient types
+    all_ingredients = (
+        ingredients_data["toppings"] + 
+        ingredients_data["cheeses"] + 
+        ingredients_data["doughs"]
+    )
+    
     if not 1 <= request.num_ingredients <= 10:
         raise HTTPException(400, "num_ingredients must be 1-10")
-    selected = random.sample(ingredients, request.num_ingredients)
-    return {"ingredients": selected}
+    
+    # Ensure we don't try to sample more than available
+    num_to_select = min(request.num_ingredients, len(all_ingredients))
+    selected = random.sample(all_ingredients, num_to_select)
+    
+    return {"ingreds": selected}
+
 
 @app.post("/api/save-recipe")
-def save_recipe(recipe: PizzaRecipe):  # recipe.ingredients = ["mozzarella", "salami", "classic"]
+def save_recipe(recipe: PizzaRecipe):
     # Convert names → IDs
-    all_ing = supabase.table("ingredients").select("id,name").execute()
+    all_ing = supabase.table("ingreds").select("id,name").execute()
     name_to_id = {row["name"]: row["id"] for row in all_ing.data}
-    ids = [name_to_id[name] for name in recipe.ingredients if name in name_to_id]
     
-    data, count = supabase.table("userdata").insert({
+    ids = []
+    missing = []
+    for name in recipe.ingredients:
+        if name in name_to_id:
+            ids.append(name_to_id[name])
+        else:
+            missing.append(name)
+    
+    if missing:
+        raise HTTPException(400, f"Unknown ingredients: {missing}")
+    
+    result = supabase.table("userdata").insert({
         "user_id": recipe.user_id,
         "ingredient_ids": ids,
         "liked": recipe.liked
     }).execute()
-    return {"saved_ids": ids}
+    
+    return {"saved_ids": ids, "saved_count": len(ids)}
 
 @app.get("/api/user-recipes/{user_id}")
 def get_user_recipes(user_id: str):
@@ -82,7 +116,7 @@ def get_user_recipes(user_id: str):
     for row in data.data:
         # Get names from IDs
         ids = row["ingredient_ids"]
-        names = supabase.table("ingredients").select("name").in_("id", ids).execute()
+        names = supabase.table("ingreds").select("name").in_("id", ids).execute()
         recipes.append({
             "ingredient_names": [n["name"] for n in names.data],
             "liked": row["liked"],
