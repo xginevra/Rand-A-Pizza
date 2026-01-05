@@ -1,5 +1,5 @@
 {
-    "name": "BoozeOrNo",
+    "name": "Rand-A-Pizza",
     "dockerComposeFile": "docker-compose.yml",
     "service": "backend",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
