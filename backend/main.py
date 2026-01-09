@@ -7,7 +7,7 @@ from typing import List
 import random
 from dotenv import load_dotenv
 
-app = FastAPI(title="Rand-A-Pizza API")
+app = FastAPI()
 
 load_dotenv()
 
