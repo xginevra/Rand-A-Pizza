@@ -4,13 +4,22 @@
   "service": "backend",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [3000, 8000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "Backend API",
+      "onAutoForward": "notify"
+    }
+  },
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
-    },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    }
   },
-  "postCreateCommand": "pip install -r requirements.txt && docker-compose up -d frontend",
+  "postCreateCommand": "pip install -r requirements.txt && cd ../frontend && npm install",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,8 +32,5 @@
   "remoteEnv": {
     "SUPABASE_URL": "${localEnv:SUPABASE_URL}",
     "SUPABASE_KEY": "${localEnv:SUPABASE_KEY}"
-  },
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "bash"
   }
 }
