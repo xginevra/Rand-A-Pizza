@@ -4,12 +4,22 @@
   "service": "backend",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [3000, 8000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "Backend API",
+      "onAutoForward": "notify"
+    }
+  },
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
     }
-  }, 
-  "postCreateCommand": "pip install -r requirements.txt",
+  },
+  "postCreateCommand": "cd frontend/rand-a-pizza && npm install && npm run dev",
   "customizations": {
     "vscode": {
       "extensions": [
