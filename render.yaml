@@ -4,7 +4,7 @@ services:
     name: rand-a-pizza-backend
     runtime: docker
     plan: free
-    dockerfilePath: ./dockerfile_backend
+    dockerfilePath: ./Dockerfile_backend
     dockerContext: .
     envVars:
       - key: SUPABASE_URL
@@ -19,7 +19,7 @@ services:
     name: rand-a-pizza-frontend
     runtime: docker
     plan: free
-    dockerfilePath: ./dockerfile_frontend
+    dockerfilePath: ./Dockerfile_frontend
     dockerContext: .
     envVars:
       - key: SUPABASE_URL
@@ -27,4 +27,4 @@ services:
       - key: SUPABASE_KEY
         sync: false
       - key: PORT
-        value: 8000
+        value: 5173
