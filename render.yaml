@@ -7,6 +7,10 @@ services:
     dockerfilePath: ./dockerfile_backend
     dockerContext: .
     envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
       - key: PORT
         value: 8000
 
