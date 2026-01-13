@@ -22,5 +22,9 @@ services:
     dockerfilePath: ./dockerfile_frontend
     dockerContext: .
     envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
       - key: PORT
-        value: 5173
+        value: 8000
