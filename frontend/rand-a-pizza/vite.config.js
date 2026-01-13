@@ -8,17 +8,16 @@ export default defineConfig({
     host: '0.0.0.0',
     allowedHosts: [
       'localhost',
-      'rand-a-pizza.onrender.com' 
+      'rand-a-pizza-frontend.onrender.com',
+      'rand-a-pizza-backend.onrender.com' 
     ],
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-        router: req => {
-          const hostHeader = req.headers?.host?.split(':')[0] || 'localhost';
-          return `http://${hostHeader}:8000`;
-        },
+  proxy: {
+  '/api': {
+    target: 'https://rand-a-pizza-backend.onrender.com',
+    changeOrigin: true,
+    secure: true,
+  },
+},
       },
     },
   },
