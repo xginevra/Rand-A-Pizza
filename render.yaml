@@ -13,8 +13,10 @@ services:
         sync: false
       - key: PORT
         value: 8000
+      - key: VITE_BACKEND_URL
+        value: rand-a-pizza-backend.onrender.com
 
-  # Vite/React frontend (Docker)
+  # Vite/React frontend (Docker)  
   - type: web
     name: rand-a-pizza-frontend
     runtime: docker
@@ -26,5 +28,7 @@ services:
         sync: false
       - key: SUPABASE_KEY
         sync: false
+      - key: VITE_BACKEND_URL
+        value: rand-a-pizza-backend.onrender.com  # Backend service name
       - key: PORT
         value: 5173
