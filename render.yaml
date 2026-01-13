@@ -11,8 +11,8 @@ services:
         sync: false
       - key: SUPABASE_KEY
         sync: false
-      - key: PORT
-        value: 8000
+      # - key: PORT
+      #   value: 8000
       - key: VITE_BACKEND_URL
         value: rand-a-pizza-backend.onrender.com
 
