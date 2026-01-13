@@ -1,19 +1,13 @@
 FROM python:3.11
-
-# Install curl (needed for Node.js install script) and other dependencies if needed
 RUN apt-get update && apt-get install -y curl
-
-# Install Node.js (latest LTS) and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
     && apt-get install -y nodejs
 
-# Copy backend code
-COPY backend /workspaces/Rand-A-Pizza/backend
-#COPY db /workspaces/Rand-A-Pizza/db
+# paths for render
+COPY backend ./backend
 COPY requirements.txt .
+RUN pip install -r requirements.txt
+WORKDIR ./backend
 
-# (Optional) Install Python dependencies if you have requirements.txt in backend
- RUN pip install -r requirements.txt
-WORKDIR /workspaces/Rand-A-Pizza/backend
-
+EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

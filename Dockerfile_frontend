@@ -1,10 +1,8 @@
 FROM node:18
-
-COPY frontend /workspaces/Rand-A-Pizza/frontend
-WORKDIR /workspaces/Rand-A-Pizza/frontend/rand-a-pizza
-
+COPY frontend ./frontend
+WORKDIR ./frontend/rand-a-pizza
 RUN npm install @supabase/supabase-js
-
 RUN npm install
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
-CMD ["npm", "run", "dev"]
