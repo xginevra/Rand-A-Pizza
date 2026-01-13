@@ -16,8 +16,6 @@ export default defineConfig({
     target: 'https://rand-a-pizza-backend.onrender.com',
     changeOrigin: true,
     secure: true,
-  },
-},
       },
     },
   },
