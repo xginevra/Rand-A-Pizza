@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
+    allowedHosts: [
+      'localhost',
+      'rand-a-pizza.onrender.com' 
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -18,4 +22,4 @@ export default defineConfig({
       },
     },
   },
-})
+});
