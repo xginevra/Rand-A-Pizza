@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20-alpine
 COPY frontend ./frontend
 WORKDIR ./frontend/rand-a-pizza
 RUN npm install @supabase/supabase-js
