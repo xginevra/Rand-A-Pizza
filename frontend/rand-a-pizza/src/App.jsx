@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import Ingredients from "./components/Ingredients";
 import NavBar from "./components/NavBar";
+import CreatePizza from "./components/CreatePizza";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -28,7 +28,8 @@ function App() {
           share unique combos based on your flavor profiles and your preference
         </p>
       </div>
-      <Ingredients />
+      <CreatePizza />
+      {/* <Ingredients /> */}
     </>
   );
 }
