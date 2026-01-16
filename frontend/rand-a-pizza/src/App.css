@@ -108,7 +108,7 @@ button:hover {
 }
 
 .landing-button {
-  height: 6vh;
+  padding: 15px;
 }
 
 .discover-section {
