@@ -48,12 +48,28 @@ function CreatePizza() {
     });
   };
 
+  const handleStepClick = (stepNumber) => {
+    setCurrentStep(stepNumber);
+  };
+
+  const isFormComplete =
+    selectedDough && selectedCheese && selectedToppings.length > 0;
+
+  const handleSubmit = () => {
+    console.log({
+      dough: selectedDough,
+      cheese: selectedCheese,
+      toppings: selectedToppings,
+    });
+  };
+
   return (
     <div className="createpizza-container">
       <div className="pizza-builder">
         {/* Left Side - Pizza Visual */}
         <div className="pizza-visual">
           <div className="pizza-stack">
+            <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />
             {selectedDough && (
               <img
                 src="/ingredients/dough/d_n_s.png"
@@ -83,7 +99,10 @@ function CreatePizza() {
         {/* Right Side - Step Selection */}
         <div className="step-selection">
           {/* Step 1: Dough */}
-          <div className={`step ${currentStep === 1 ? "active" : ""}`}>
+          <div
+            className={`step ${currentStep === 1 ? "active" : ""}`}
+            onClick={() => handleStepClick(1)}
+          >
             <h3>Step 1: Select Dough</h3>
             {selectedDough && <p className="selected">✓ {selectedDough}</p>}
             {currentStep === 1 && (
@@ -104,7 +123,10 @@ function CreatePizza() {
           </div>
 
           {/* Step 2: Cheese */}
-          <div className={`step ${currentStep === 2 ? "active" : ""}`}>
+          <div
+            className={`step ${currentStep === 2 ? "active" : ""}`}
+            onClick={() => handleStepClick(2)}
+          >
             <h3>Step 2: Select Cheese</h3>
             {selectedCheese && (
               <p className="selected">✓ {selectedCheese.name}</p>
@@ -127,7 +149,10 @@ function CreatePizza() {
           </div>
 
           {/* Step 3: Toppings */}
-          <div className={`step ${currentStep === 3 ? "active" : ""}`}>
+          <div
+            className={`step ${currentStep === 3 ? "active" : ""}`}
+            onClick={() => handleStepClick(3)}
+          >
             <h3>Step 3: Select Toppings (Multiple)</h3>
             {selectedToppings.length > 0 && (
               <p className="selected">
@@ -153,13 +178,10 @@ function CreatePizza() {
             )}
           </div>
 
-          {/* Action Buttons */}
-          {currentStep > 1 && (
-            <button
-              className="nav-btn back-btn"
-              onClick={() => setCurrentStep(currentStep - 1)}
-            >
-              ← Back
+          {/* Submit Button */}
+          {isFormComplete && (
+            <button className="submit-btn" onClick={handleSubmit}>
+              Submit Pizza Recipe
             </button>
           )}
         </div>

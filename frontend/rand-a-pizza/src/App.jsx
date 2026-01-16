@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import NavBar from "./components/NavBar";
 import CreatePizza from "./components/CreatePizza";
+import NavBar from "./components/NavBar";
 
 function App() {
   const [count, setCount] = useState(0);
