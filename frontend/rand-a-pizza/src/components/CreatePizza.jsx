@@ -1,11 +1,13 @@
 import { useState } from "react";
 import "../styles/CreatePizza.css";
+import Modal from "./Modal";
 
 function CreatePizza() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDough, setSelectedDough] = useState(null);
   const [selectedCheese, setSelectedCheese] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const doughs = [
     "Classic Wheat",
@@ -61,6 +63,16 @@ function CreatePizza() {
       cheese: selectedCheese,
       toppings: selectedToppings,
     });
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    // Reset all selections
+    setCurrentStep(1);
+    setSelectedDough(null);
+    setSelectedCheese(null);
+    setSelectedToppings([]);
   };
 
   return (
@@ -186,6 +198,15 @@ function CreatePizza() {
           )}
         </div>
       </div>
+
+      {/* Thank You Modal */}
+      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+        <h2>🍕 Thank You!</h2>
+        <p>
+          Thank you for submitting your pizza recipe! We appreciate
+          your feedback. Your taste could determine the next big pizza trend!
+        </p>
+      </Modal>
     </div>
   );
 }
