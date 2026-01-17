@@ -1,0 +1,257 @@
+import { useState } from "react";
+import { supabase } from "./supabase";
+import "../styles/CreatePizza.css";
+import Modal from "./Modal";
+
+function CreatePizza() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedDough, setSelectedDough] = useState(null);
+  const [selectedCheese, setSelectedCheese] = useState(null);
+  const [selectedToppings, setSelectedToppings] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const doughs = [
+    { name: "Classic Wheat", id: "cla" },
+    { name: "Roman", id: "rom"},
+    { name: "Neapolitan", id: "nea"},
+    { name: "American/Flamkuchen", id: "ame"}
+  ]
+  const cheeses = [
+    { name: "Mozzarella", id: "moz" },
+    { name: "Gouda", id: "gou" },
+    { name: "Emmentaler", id: "emm" },
+    { name: "Edamer", id: "eda" },
+  ];
+  const toppings = [
+    { name: "Salami", id: "salami" },
+    { name: "Ham", id: "ham" },
+    { name: "Tuna", id: "tuna" },
+    { name: "Mushrooms", id: "mush" },
+    { name: "Sucuk", id: "sucuk" },
+    { name: "Garlic", id: "garlic" },
+    { name: "Mozzarella", id: "mozzerella" },
+    { name: "Onion", id: "onion" },
+    { name: "Pepper", id: "pepper" },
+    { name: "Pineapple", id: "pineapple" },
+    { name: "Döner", id: "donner" },
+    { name: "Gyros", id: "gyros" }
+  ];
+
+  const handleDoughSelect = (dough) => {
+    setSelectedDough(dough);
+    setCurrentStep(2);
+  };
+
+  const handleCheeseSelect = (cheese) => {
+    setSelectedCheese(cheese);
+    setCurrentStep(3);
+  };
+
+  const handleClearToppings = (e) => {
+    e.stopPropagation();
+    setSelectedToppings([]);
+  };
+
+  const handleToppingSelect = (topping) => {
+    setSelectedToppings((prev) => {
+      const isSelected = prev.find((t) => t.id === topping.id);
+      if (isSelected) {
+        return prev.filter((t) => t.id !== topping.id);
+      } else {
+        return [...prev, topping];
+      }
+    });
+  };
+
+  const handleStepClick = (stepNumber) => {
+    setCurrentStep(stepNumber);
+  };
+
+  const isFormComplete =
+    selectedDough && selectedCheese && selectedToppings.length > 0;
+
+  const handleSubmit = async () => {
+    if (!isFormComplete) return;
+
+    setIsSubmitting(true);
+
+    const { data, error } = await supabase
+      .from('pizza_recipes')
+      .insert([
+        {
+          dough: selectedDough,
+          cheese: selectedCheese,
+          toppings: selectedToppings
+        },
+      ]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error('Error uploading pizza, error');
+      alert("Something went wrong saving your pizza!");
+    } else {
+      console.log('Pizza saved!', data);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    // Reset all selections
+    setCurrentStep(1);
+    setSelectedDough(null);
+    setSelectedCheese(null);
+    setSelectedToppings([]);
+  };
+
+  return (
+    <div className="createpizza-container">
+      <div className="pizza-builder">
+        {/* Left Side - Pizza Visual */}
+        <div className="pizza-visual">
+          <div className="pizza-stack">
+            <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />
+            {selectedDough && (
+              <img
+                src={`/ingredients/dough/d_${selectedDough.id}.png`}
+                alt={selectedDough.name}
+                className="pizza-layer dough-layer"
+              />
+            )}
+            {selectedCheese && (
+              <img
+                src={`/ingredients/cheese/c_${selectedCheese.id}.png`}
+                alt={selectedCheese.name}
+                className="pizza-layer cheese-layer"
+              />
+            )}
+            {selectedToppings.map((topping, index) => (
+              <img
+                key={topping.id}
+                src={`/ingredients/toppings/t_${topping.id}.png`}
+                alt={topping.name}
+                className="pizza-layer topping-layer"
+                style={{ zIndex: 30 + index }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Right Side - Step Selection */}
+        <div className="step-selection">
+          {/* Step 1: Dough */}
+          <div
+            className={`step ${currentStep === 1 ? "active" : ""}`}
+            onClick={() => handleStepClick(1)}
+          >
+            <h3>Step 1: Select Dough</h3>
+            {selectedDough && <p className="selected">✓ {selectedDough.name}</p>}
+            {currentStep === 1 && (
+              <div className="options">
+                {doughs.map((dough) => (
+                  <button
+                    key={dough.id}
+                    className={`option-btn ${
+                      selectedDough?.id === dough.id ? "selected" : ""
+                    }`}
+                    onClick={() => handleDoughSelect(dough)}
+                  >
+                    {dough.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Step 2: Cheese */}
+          <div
+            className={`step ${currentStep === 2 ? "active" : ""}`}
+            onClick={() => handleStepClick(2)}
+          >
+            <h3>Step 2: Select Cheese</h3>
+            {selectedCheese && (
+              <p className="selected">✓ {selectedCheese.name}</p>
+            )}
+            {currentStep === 2 && (
+              <div className="options">
+                {cheeses.map((cheese) => (
+                  <button
+                    key={cheese.id}
+                    className={`option-btn ${
+                      selectedCheese?.id === cheese.id ? "selected" : ""
+                    }`}
+                    onClick={() => handleCheeseSelect(cheese)}
+                  >
+                    {cheese.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Step 3: Toppings */}
+          <div
+            className={`step ${currentStep === 3 ? "active" : ""}`}
+            onClick={() => handleStepClick(3)}
+          >
+            <h3>Step 3: Select Toppings (Multiple)</h3>
+            {selectedToppings.length > 0 && (
+              <p className="selected">
+                ✓ {selectedToppings.map((t) => t.name).join(", ")}
+              </p>
+            )}
+            {currentStep === 3 && (
+              <div className="step-content">
+                <div className="options">
+                  {toppings.map((topping) => (
+                    <button
+                      key={topping.id}
+                      className={`option-btn ${
+                        selectedToppings.find((t) => t.id === topping.id)
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => handleToppingSelect(topping)}
+                    >
+                      {topping.name}
+                    </button>
+                  ))}
+                </div>
+                {selectedToppings.length > 0 && (
+                  <button
+                    className="clear-btn"
+                    onClick={handleClearToppings}
+                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    ❌ Clear All Toppings
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          {isFormComplete && (
+            <button className="submit-btn" onClick={handleSubmit}>
+              Submit Pizza Recipe
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Thank You Modal */}
+      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+        <h2>🍕 Thank You!</h2>
+        <p>
+          Thank you for submitting your pizza recipe! We appreciate
+          your feedback. Your taste could determine the next big pizza trend!
+        </p>
+      </Modal>
+    </div>
+  );
+}
+
+export default CreatePizza;
