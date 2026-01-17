@@ -1,10 +1,13 @@
 import React from "react";
 import '../App.css';
+import NavBar from "../components/NavBar";
+import CreatePizza from "../components/CreatePizza";
 
 const CreateAPizza = () => {
     return (
         <div>
-            <h1>Hello World</h1>
+            <NavBar />
+            <CreatePizza />
         </div>
     )
 }
