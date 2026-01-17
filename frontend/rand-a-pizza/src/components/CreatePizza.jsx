@@ -13,11 +13,11 @@ function CreatePizza() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const doughs = [
-    "Classic Wheat",
-    "Roman",
-    "Neapolitan",
-    "American/Flammkuchen",
-  ];
+    { name: "Classic Wheat", id: "cla" },
+    { name: "Roman", id: "rom"},
+    { name: "Neapolitan", id: "nea"},
+    { name: "American/Flamkuchen", id: "ame"}
+  ]
   const cheeses = [
     { name: "Mozzarella", id: "moz" },
     { name: "Gouda", id: "gou" },
@@ -109,8 +109,8 @@ function CreatePizza() {
             <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />
             {selectedDough && (
               <img
-                src="/ingredients/dough/d_n_s.png"
-                alt="Dough"
+                src={`/ingredients/dough/d_${selectedDough.id}.png`}
+                alt={selectedDough.name}
                 className="pizza-layer dough-layer"
               />
             )}
@@ -141,18 +141,18 @@ function CreatePizza() {
             onClick={() => handleStepClick(1)}
           >
             <h3>Step 1: Select Dough</h3>
-            {selectedDough && <p className="selected">✓ {selectedDough}</p>}
+            {selectedDough && <p className="selected">✓ {selectedDough.name}</p>}
             {currentStep === 1 && (
               <div className="options">
                 {doughs.map((dough) => (
                   <button
-                    key={dough}
+                    key={dough.id}
                     className={`option-btn ${
-                      selectedDough === dough ? "selected" : ""
+                      selectedDough?.id === dough.id ? "selected" : ""
                     }`}
                     onClick={() => handleDoughSelect(dough)}
                   >
-                    {dough}
+                    {dough.name}
                   </button>
                 ))}
               </div>
