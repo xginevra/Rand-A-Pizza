@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "./supabase";
 import "../styles/CreatePizza.css";
 import Modal from "./Modal";
 
@@ -9,12 +10,14 @@ function CreatePizza() {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const doughs = [
-    "Classic Wheat",
-    "Roman",
-    "Neapolitan",
-    "American/Flammkuchen",
-  ];
+    { name: "Classic Wheat", id: "cla" },
+    { name: "Roman", id: "rom"},
+    { name: "Neapolitan", id: "nea"},
+    { name: "American/Flamkuchen", id: "ame"}
+  ]
   const cheeses = [
     { name: "Mozzarella", id: "moz" },
     { name: "Gouda", id: "gou" },
@@ -27,6 +30,13 @@ function CreatePizza() {
     { name: "Tuna", id: "tuna" },
     { name: "Mushrooms", id: "mush" },
     { name: "Sucuk", id: "sucuk" },
+    { name: "Garlic", id: "garlic" },
+    { name: "Mozzarella", id: "mozzerella" },
+    { name: "Onion", id: "onion" },
+    { name: "Pepper", id: "pepper" },
+    { name: "Pineapple", id: "pineapple" },
+    { name: "Döner", id: "donner" },
+    { name: "Gyros", id: "gyros" }
   ];
 
   const handleDoughSelect = (dough) => {
@@ -37,6 +47,11 @@ function CreatePizza() {
   const handleCheeseSelect = (cheese) => {
     setSelectedCheese(cheese);
     setCurrentStep(3);
+  };
+
+  const handleClearToppings = (e) => {
+    e.stopPropagation();
+    setSelectedToppings([]);
   };
 
   const handleToppingSelect = (topping) => {
@@ -57,13 +72,30 @@ function CreatePizza() {
   const isFormComplete =
     selectedDough && selectedCheese && selectedToppings.length > 0;
 
-  const handleSubmit = () => {
-    console.log({
-      dough: selectedDough,
-      cheese: selectedCheese,
-      toppings: selectedToppings,
-    });
-    setIsModalOpen(true);
+  const handleSubmit = async () => {
+    if (!isFormComplete) return;
+
+    setIsSubmitting(true);
+
+    const { data, error } = await supabase
+      .from('pizza_recipes')
+      .insert([
+        {
+          dough: selectedDough,
+          cheese: selectedCheese,
+          toppings: selectedToppings
+        },
+      ]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error('Error uploading pizza, error');
+      alert("Something went wrong saving your pizza!");
+    } else {
+      console.log('Pizza saved!', data);
+      setIsModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
@@ -84,8 +116,8 @@ function CreatePizza() {
             <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />
             {selectedDough && (
               <img
-                src="/ingredients/dough/d_n_s.png"
-                alt="Dough"
+                src={`/ingredients/dough/d_${selectedDough.id}.png`}
+                alt={selectedDough.name}
                 className="pizza-layer dough-layer"
               />
             )}
@@ -116,18 +148,18 @@ function CreatePizza() {
             onClick={() => handleStepClick(1)}
           >
             <h3>Step 1: Select Dough</h3>
-            {selectedDough && <p className="selected">✓ {selectedDough}</p>}
+            {selectedDough && <p className="selected">✓ {selectedDough.name}</p>}
             {currentStep === 1 && (
               <div className="options">
                 {doughs.map((dough) => (
                   <button
-                    key={dough}
+                    key={dough.id}
                     className={`option-btn ${
-                      selectedDough === dough ? "selected" : ""
+                      selectedDough?.id === dough.id ? "selected" : ""
                     }`}
                     onClick={() => handleDoughSelect(dough)}
                   >
-                    {dough}
+                    {dough.name}
                   </button>
                 ))}
               </div>
@@ -172,20 +204,31 @@ function CreatePizza() {
               </p>
             )}
             {currentStep === 3 && (
-              <div className="options">
-                {toppings.map((topping) => (
+              <div className="step-content">
+                <div className="options">
+                  {toppings.map((topping) => (
+                    <button
+                      key={topping.id}
+                      className={`option-btn ${
+                        selectedToppings.find((t) => t.id === topping.id)
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => handleToppingSelect(topping)}
+                    >
+                      {topping.name}
+                    </button>
+                  ))}
+                </div>
+                {selectedToppings.length > 0 && (
                   <button
-                    key={topping.id}
-                    className={`option-btn ${
-                      selectedToppings.find((t) => t.id === topping.id)
-                        ? "selected"
-                        : ""
-                    }`}
-                    onClick={() => handleToppingSelect(topping)}
+                    className="clear-btn"
+                    onClick={handleClearToppings}
+                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
                   >
-                    {topping.name}
+                    ❌ Clear All Toppings
                   </button>
-                ))}
+                )}
               </div>
             )}
           </div>

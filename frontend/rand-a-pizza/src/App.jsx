@@ -1,37 +1,18 @@
 import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import CreatePizza from "./components/CreatePizza";
-import NavBar from "./components/NavBar";
+import CreateAPizza from "./pages/CreateAPizza";
+import Home from "./pages/Home";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div className="landing-header">
-        {/* The Pizza Image (Absolute positioned background layer) */}
-        <div className="pizza-header" />
-
-        {/* Navigation */}
-        <NavBar />
-
-        {/* Text Content (Left Side) */}
-        <div className="landing-content">
-          <h1>Get your favorite pizza on the shelves!</h1>
-          <button className="landing-button">Get started now!</button>
-        </div>
-      </div>
-
-      <div className="discover-section">
-        <h2>Submit your recipes INSTANTLY!</h2>
-        <p className="discover-subtext">
-          share unique combos based on your flavor profiles and your preference
-        </p>
-      </div>
-      <CreatePizza />
-      {/* <Ingredients /> */}
-    </>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create-pizza" element={<CreateAPizza />} />
+      </Routes>
+    </Router>
+  )
 }
 
 export default App;
