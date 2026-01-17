@@ -13,7 +13,7 @@ function Home() {
 
             <div className="landing-content">
                 <h1>Get your favorite pizza on the shelves!</h1>
-                <button className="landing-button" onClick={() => navigate("/create-pizza")}>
+                <button className="landing-button" onClick={() => Navigate("/create-pizza")}>
                     Get started now!
                 </button>
             </div>

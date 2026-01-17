@@ -150,3 +150,13 @@ h2 {
   flex-direction: column;
   padding: 0 80px !important;
 }
+
+.clear-btn {
+  background-color: #111111;
+  color: #cccccc;
+}
+
+.clear-btn:hover {
+  background-color: #111111;
+  color: white;
+}

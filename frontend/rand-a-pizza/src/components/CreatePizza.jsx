@@ -39,6 +39,11 @@ function CreatePizza() {
     setCurrentStep(3);
   };
 
+  const handleClearToppings = (e) => {
+    e.stopPropagation();
+    setSelectedToppings([]);
+  };
+
   const handleToppingSelect = (topping) => {
     setSelectedToppings((prev) => {
       const isSelected = prev.find((t) => t.id === topping.id);
@@ -172,20 +177,31 @@ function CreatePizza() {
               </p>
             )}
             {currentStep === 3 && (
-              <div className="options">
-                {toppings.map((topping) => (
+              <div className="step-content">
+                <div className="options">
+                  {toppings.map((topping) => (
+                    <button
+                      key={topping.id}
+                      className={`option-btn ${
+                        selectedToppings.find((t) => t.id === topping.id)
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => handleToppingSelect(topping)}
+                    >
+                      {topping.name}
+                    </button>
+                  ))}
+                </div>
+                {selectedToppings.length > 0 && (
                   <button
-                    key={topping.id}
-                    className={`option-btn ${
-                      selectedToppings.find((t) => t.id === topping.id)
-                        ? "selected"
-                        : ""
-                    }`}
-                    onClick={() => handleToppingSelect(topping)}
+                    className="clear-btn"
+                    onClick={handleClearToppings}
+                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
                   >
-                    {topping.name}
+                    ❌ Clear All Toppings
                   </button>
-                ))}
+                )}
               </div>
             )}
           </div>
