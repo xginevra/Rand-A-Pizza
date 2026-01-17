@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "../supabase";
 import "../styles/CreatePizza.css";
 import Modal from "./Modal";
 
@@ -8,6 +9,8 @@ function CreatePizza() {
   const [selectedCheese, setSelectedCheese] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const doughs = [
     "Classic Wheat",
@@ -62,13 +65,30 @@ function CreatePizza() {
   const isFormComplete =
     selectedDough && selectedCheese && selectedToppings.length > 0;
 
-  const handleSubmit = () => {
-    console.log({
-      dough: selectedDough,
-      cheese: selectedCheese,
-      toppings: selectedToppings,
-    });
-    setIsModalOpen(true);
+  const handleSubmit = async () => {
+    if (!isFormComplete) return;
+
+    setIsSubmitting(true);
+
+    const { data, error } = await supabase
+      .from('pizza_recipes')
+      .insert([
+        {
+          dough: selectedDough,
+          cheese: selectedCheese,
+          toppings: selectedToppings
+        },
+      ]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      console.error('Error uploading pizza, error');
+      alert("Something went wrong saving your pizza!");
+    } else {
+      console.log('Pizza saved!', data);
+      setIsModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
