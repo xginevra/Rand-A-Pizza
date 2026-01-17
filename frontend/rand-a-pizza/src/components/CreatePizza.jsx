@@ -30,6 +30,13 @@ function CreatePizza() {
     { name: "Tuna", id: "tuna" },
     { name: "Mushrooms", id: "mush" },
     { name: "Sucuk", id: "sucuk" },
+    { name: "Garlic", id: "garlic" },
+    { name: "Mozzarella", id: "mozzerella" },
+    { name: "Onion", id: "onion" },
+    { name: "Pepper", id: "pepper" },
+    { name: "Pineapple", id: "pineapple" },
+    { name: "Döner", id: "donner" },
+    { name: "Gyros", id: "gyros" }
   ];
 
   const handleDoughSelect = (dough) => {
