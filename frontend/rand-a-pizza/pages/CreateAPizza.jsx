@@ -1,4 +1,4 @@
-import React from "reaxt";
+import React from "react";
 import '../App.css';
 
 const CreateAPizza = () => {
