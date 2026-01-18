@@ -54,6 +54,10 @@ function CreatePizza() {
     setSelectedToppings([]);
   };
 
+  const handleClearCheese = (e) => {
+    e.stopPropagation();
+    setSelectedCheese();
+  };
   const handleToppingSelect = (topping) => {
     setSelectedToppings((prev) => {
       const isSelected = prev.find((t) => t.id === topping.id);
@@ -188,6 +192,13 @@ function CreatePizza() {
                     {cheese.name}
                   </button>
                 ))}
+                <button
+                    className="clear-btn"
+                    onClick={handleClearCheese}
+                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    ❌ No Cheese
+                  </button>
               </div>
             )}
           </div>
