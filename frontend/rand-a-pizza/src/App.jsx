@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import CreateAPizza from "./pages/CreateAPizza";
 import Home from "./pages/Home";
