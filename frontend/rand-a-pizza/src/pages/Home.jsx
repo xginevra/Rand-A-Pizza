@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
-import CreatePizza from "../components/CreatePizza";
+import PizzaLeaderboard from "../components/PizzaLeaderboard";
 
 function Home() {
     const Navigate = useNavigate();
@@ -25,8 +25,7 @@ function Home() {
                 share unique combos based on your flavor profiles and your preference
             </p>
         </div>
-
-        <CreatePizza />
+        <PizzaLeaderboard />
     </>
     );
 }

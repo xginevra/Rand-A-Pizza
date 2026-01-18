@@ -1,76 +1,128 @@
 .leaderboard-container {
-    padding: 2rem;
-    text-align: center;
-    max-width: 1200px;
-    margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .pizza-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-
 @media (min-width: 1000px) {
-    .pizza-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+  .pizza-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .pizza-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s;
+  /* Ensure card grows if list is long */
+  height: 100%; 
+  justify-content: space-between;
 }
 
 .pizza-card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px);
 }
 
 .card-visual-wrapper {
-    height: 220px;
+  height: 200px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* --- New Styles for Ingredients --- */
+.card-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 1rem;
+  padding: 0 10px;
+}
+
+.ing-tag {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.ing-tag.dough {
+  background-color: #f5e6ca; /* Wheat color */
+  color: #5d4037;
+}
+
+.ing-tag.cheese {
+  background-color: #fff9c4; /* Light Yellow */
+  color: #fbc02d;
+}
+
+.ing-tag.topping {
+  background-color: #ffebee; /* Light Red */
+  color: #c62828;
+}
+/* ---------------------------------- */
+
+.card-info {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    text-align: center;
 }
 
 .card-info h3 {
-    margin: 0.5rem 0;
-    color: #333;
+  margin: 0.5rem 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.vote-count {
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 10px;
 }
 
 .vote-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: auto;
 }
 
 .vote-btn {
-    padding: 0.5rem 1.5rem;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .vote-btn.yes {
-    background-color: #4CAF50;
-    color: white;
+  background-color: #4CAF50;
+  color: white;
 }
 .vote-btn.yes:hover { background-color: #45a049; }
 
 .vote-btn.no {
-    background-color: #f44336;
-    color: white;
+  background-color: #f44336;
+  color: white;
 }
 .vote-btn.no:hover { background-color: #d32f2f; }
