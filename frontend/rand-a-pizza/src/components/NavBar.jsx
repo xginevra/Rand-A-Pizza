@@ -1,15 +1,16 @@
-import React from "react";
+import { NavLink } from "react-router-dom";
 import "../App.css";
-import {Link} from "react-router-dom";
 
 function NavBar() {
-    return (
-        <header>
-            <div className="navbar">
-            <img className="navbar-logo" src="/logo.png" alt="Rand-A-Pizza" />
-            </div>
-        </header>
-    )
+  return (
+    <header>
+      <div className="navbar">
+        <NavLink to="/">
+          <img className="navbar-logo" src="/logo.png" alt="Rand-A-Pizza" />
+        </NavLink>
+      </div>
+    </header>
+  );
 }
 
 export default NavBar;

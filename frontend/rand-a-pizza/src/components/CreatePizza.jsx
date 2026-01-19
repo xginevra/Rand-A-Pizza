@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { supabase } from "./supabase";
 import "../styles/CreatePizza.css";
 import Modal from "./Modal";
+import { supabase } from "./supabase";
 
 function CreatePizza() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -17,10 +17,10 @@ function CreatePizza() {
 
   const doughs = [
     { name: "Classic Wheat", id: "cla" },
-    { name: "Roman", id: "rom"},
-    { name: "Neapolitan", id: "nea"},
-    { name: "American/Flamkuchen", id: "ame"}
-  ]
+    { name: "Roman", id: "rom" },
+    { name: "Neapolitan", id: "nea" },
+    { name: "American/Flamkuchen", id: "ame" },
+  ];
   const cheeses = [
     { name: "Mozzarella", id: "moz" },
     { name: "Gouda", id: "gou" },
@@ -39,8 +39,21 @@ function CreatePizza() {
     { name: "Pepper", id: "pepper" },
     { name: "Pineapple", id: "pineapple" },
     { name: "Döner", id: "donner" },
-    { name: "Gyros", id: "gyros" }
+    { name: "Gyros", id: "gyros" },
   ];
+
+  const handleRandomize = () => {
+    const randomDough =doughs[Math.floor(Math.random() * doughs.length)];
+    const randomCheese = cheeses[Math.floor(Math.random() * cheeses.length)];
+    const numToppings = Math.floor(Math.random() * 3) + 1;
+    const shuffledToppings = [...toppings].sort(() => 0.5 - Math.random());
+    const randomToppings = shuffledToppings.slice(0, numToppings);
+
+    setSelectedDough(randomDough);
+    setSelectedCheese(randomCheese);
+    setSelectedToppings(randomToppings);
+    setCurrentStep(3);
+  }
 
   const handleDoughSelect = (dough) => {
     setSelectedDough(dough);
@@ -78,19 +91,22 @@ function CreatePizza() {
   };
 
   const isFormComplete =
-    selectedDough && selectedCheese && selectedToppings.length > 0;
+    selectedDough && selectedToppings.length > 0;
 
-// Helper: robust comparison of toppings
+  // Helper: robust comparison of toppings
   const areToppingsEqual = (savedToppings, currentToppings) => {
     // Safety check: ensure both are actually arrays before comparing
-    if (!Array.isArray(savedToppings) || !Array.isArray(currentToppings)) return false;
-    
+
+    if (!Array.isArray(savedToppings) || !Array.isArray(currentToppings))
+      return false;
+
+
     if (savedToppings.length !== currentToppings.length) return false;
-    
+
     // Create sorted arrays of IDs to compare
     const savedIds = savedToppings.map((t) => t.id).sort();
     const currentIds = currentToppings.map((t) => t.id).sort();
-    
+
     return JSON.stringify(savedIds) === JSON.stringify(currentIds);
   };
 
@@ -113,19 +129,24 @@ function CreatePizza() {
       const existingPizza = allRecipes.find((recipe) => {
         // Compare Dough (Safe check for object existence)
         const doughMatch = recipe.dough?.id === selectedDough.id;
-        
+
         // Compare Cheese
-        const cheeseMatch = recipe.cheese?.id === selectedCheese.id;
-        
+
+        const cheeseMatch = recipe.cheese?.id === selectedCheese?.id;
+
+
         // Compare Toppings
-        const toppingsMatch = areToppingsEqual(recipe.toppings, selectedToppings);
+        const toppingsMatch = areToppingsEqual(
+          recipe.toppings,
+          selectedToppings,
+        );
 
         return doughMatch && cheeseMatch && toppingsMatch;
       });
 
       if (existingPizza) {
         console.log("Found match:", existingPizza.name);
-        
+
         // SCENARIO A: Update Vote
         const { error: updateError } = await supabase
           .from("pizza_recipes")
@@ -152,7 +173,7 @@ function CreatePizza() {
 
   const handleSaveNewPizza = async () => {
     if (!pizzaName.trim()) return alert("Please give your pizza a name!");
-    
+
     setIsSubmitting(true);
 
     const { error } = await supabase.from("pizza_recipes").insert([
@@ -177,7 +198,7 @@ function CreatePizza() {
     }
   };
 
-const handleModalClose = () => {
+  const handleModalClose = () => {
     setIsSuccessModalOpen(false);
     setIsNameInputOpen(false);
     setCurrentStep(1);
@@ -194,7 +215,11 @@ const handleModalClose = () => {
         {/* Left Side - Pizza Visual */}
         <div className="pizza-visual">
           <div className="pizza-stack">
-            <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />
+            <img
+              src="/ingredients/plate.png"
+              alt="Pizza Base"
+              className="pizza-layer base-layer"
+            />
             {selectedDough && (
               <img
                 src={`/ingredients/dough/d_${selectedDough.id}.png`}
@@ -223,13 +248,23 @@ const handleModalClose = () => {
 
         {/* Right Side - Step Selection */}
         <div className="step-selection">
+
+          <button
+            className="randomizer-btn"
+            onClick={handleRandomize}
+            title="Pick random ingredients"
+          >
+            🎲 Surprise Me!
+          </button>
           {/* Step 1: Dough */}
           <div
             className={`step ${currentStep === 1 ? "active" : ""}`}
             onClick={() => handleStepClick(1)}
           >
             <h3>Step 1: Select Dough</h3>
-            {selectedDough && <p className="selected">✓ {selectedDough.name}</p>}
+            {selectedDough && (
+              <p className="selected">✓ {selectedDough.name}</p>
+            )}
             {currentStep === 1 && (
               <div className="options">
                 {doughs.map((dough) => (
@@ -270,12 +305,17 @@ const handleModalClose = () => {
                   </button>
                 ))}
                 <button
-                    className="clear-btn"
-                    onClick={handleClearCheese}
-                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
-                  >
-                    ❌ No Cheese
-                  </button>
+                  className="clear-btn"
+                  onClick={handleClearCheese}
+                  style={{
+                    marginTop: "1rem",
+                    padding: "0.5rem 1rem",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  ❌ No Cheese
+                </button>
               </div>
             )}
           </div>
@@ -312,7 +352,12 @@ const handleModalClose = () => {
                   <button
                     className="clear-btn"
                     onClick={handleClearToppings}
-                    style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}
+                    style={{
+                      marginTop: "1rem",
+                      padding: "0.5rem 1rem",
+                      cursor: "pointer",
+                      fontSize: "0.9rem",
+                    }}
                   >
                     ❌ Clear All Toppings
                   </button>
@@ -321,10 +366,10 @@ const handleModalClose = () => {
             )}
           </div>
 
-{isFormComplete && (
-            <button 
-              className="submit-btn" 
-              onClick={handleInitialSubmit} 
+          {isFormComplete && (
+            <button
+              className="submit-btn"
+              onClick={handleInitialSubmit}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Checking..." : "Finish Pizza"}
@@ -343,7 +388,13 @@ const handleModalClose = () => {
           value={pizzaName}
           onChange={(e) => setPizzaName(e.target.value)}
           className="pizza-name-input"
-          style={{ width: '100%', padding: '10px', marginTop: '10px', marginBottom: '20px', fontSize: '1rem' }}
+          style={{
+            width: "100%",
+            padding: "10px",
+            marginTop: "10px",
+            marginBottom: "20px",
+            fontSize: "1rem",
+          }}
         />
         <button
           className="submit-btn"
