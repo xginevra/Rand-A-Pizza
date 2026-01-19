@@ -25,7 +25,6 @@ function Home() {
                 share unique combos based on your flavor profiles and your preference
             </p>
         </div>
-        <PizzaLeaderboard />
     </>
     );
 }
