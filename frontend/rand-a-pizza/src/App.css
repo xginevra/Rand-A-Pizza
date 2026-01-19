@@ -61,7 +61,7 @@ body {
   /* Container for H1 and Button to keep them together */
   position: relative;
   z-index: 10; /* Ensure text sits ABOVE the pizza image */
-  padding-left: 80px; /* Match navbar padding */
+  padding-left: 80px; /* /* Match navbar padding */
   display: flex;
   flex-direction: column;
   justify-content: center;
