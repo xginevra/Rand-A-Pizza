@@ -16,10 +16,10 @@ function CreatePizza() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const doughs = [
-    { name: "Classic Wheat", id: "cla" },
-    { name: "Roman", id: "rom" },
-    { name: "Neapolitan", id: "nea" },
-    { name: "American/Flamkuchen", id: "ame" },
+    { name: "Classic Wheat", id: "cla", desc: "Standard yeast" },
+    { name: "Roman", id: "rom", desc: "Thin-crispy" },
+    { name: "Neapolitan", id: "nea", desc: "Airy rim" },
+    { name: "American/Flamkuchen", id: "ame", desc: "Thicker/regional" },
   ];
   const cheeses = [
     { name: "Mozzarella", id: "moz" },
@@ -252,7 +252,7 @@ function CreatePizza() {
           <button
             className="randomizer-btn"
             onClick={handleRandomize}
-            title="Pick random ingredients"
+            title="Generate a random Pizza"
           >
             🎲 Surprise Me!
           </button>
@@ -263,7 +263,7 @@ function CreatePizza() {
           >
             <h3>Step 1: Select Dough</h3>
             {selectedDough && (
-              <p className="selected">✓ {selectedDough.name}</p>
+              <p className="selected">✓ {selectedDough.name}: <span className="dough-desc">{selectedDough.desc}</span></p>
             )}
             {currentStep === 1 && (
               <div className="options">
@@ -274,6 +274,7 @@ function CreatePizza() {
                       selectedDough?.id === dough.id ? "selected" : ""
                     }`}
                     onClick={() => handleDoughSelect(dough)}
+                    title={dough.desc}
                   >
                     {dough.name}
                   </button>
