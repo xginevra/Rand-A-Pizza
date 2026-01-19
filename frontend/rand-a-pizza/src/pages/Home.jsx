@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import CreatePizza from "../components/CreatePizza";
+
 import NavBar from "../components/NavBar";
+import PizzaLeaderboard from "../components/PizzaLeaderboard";
+
 
 function Home() {
   const Navigate = useNavigate();
@@ -22,14 +24,14 @@ function Home() {
         </div>
       </div>
 
-      <div className="discover-section">
-        <h2>Submit your recipes INSTANTLY!</h2>
-        <p className="discover-subtext">
-          share unique combos based on your flavor profiles and your preference
-        </p>
-      </div>
+        <div className="discover-section">
+            <h2>Submit your recipes INSTANTLY!</h2>
+            <p className="discover-subtext">
+                share unique combos based on your flavor profiles and your preference
+            </p>
+        </div>
+        <PizzaLeaderboard />
 
-      <CreatePizza />
     </>
   );
 }
