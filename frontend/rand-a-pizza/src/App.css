@@ -12,6 +12,10 @@ body {
   overflow-x: hidden;
 }
 
+.page{
+  width: 100vw;
+}
+
 .alfa-slab-one-regular {
   font-family: "Alfa Slab One", serif;
   font-weight: 400;

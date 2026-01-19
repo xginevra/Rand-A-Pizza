@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 
 const CreateAPizza = () => {
   return (
-    <div className="full-page">
+    <div className="page">
       <NavBar />
       <div className="page-heading">
         <h1 className="page-title">Pizza assembly station</h1>
