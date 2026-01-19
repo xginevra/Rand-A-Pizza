@@ -42,6 +42,19 @@ function CreatePizza() {
     { name: "Gyros", id: "gyros" }
   ];
 
+  const handleRandomize = () => {
+    const randomDough =doughs[Math.floor(Math.random() * doughs.length)];
+    const randomCheese = cheeses[Math.floor(Math.random() * cheeses.length)];
+    const numToppings = Math.floor(Math.random() * 3) + 1;
+    const shuffledToppings = [...toppings].sort(() => 0.5 - Math.random());
+    const randomToppings = shuffledToppings.slice(0, numToppings);
+
+    setSelectedDough(randomDough);
+    setSelectedCheese(randomCheese);
+    setSelectedToppings(randomToppings);
+    setCurrentStep(3);
+  }
+
   const handleDoughSelect = (dough) => {
     setSelectedDough(dough);
     setCurrentStep(2);
@@ -84,13 +97,13 @@ function CreatePizza() {
   const areToppingsEqual = (savedToppings, currentToppings) => {
     // Safety check: ensure both are actually arrays before comparing
     if (!Array.isArray(savedToppings) || !Array.isArray(currentToppings)) return false;
-    
+
     if (savedToppings.length !== currentToppings.length) return false;
-    
+
     // Create sorted arrays of IDs to compare
     const savedIds = savedToppings.map((t) => t.id).sort();
     const currentIds = currentToppings.map((t) => t.id).sort();
-    
+
     return JSON.stringify(savedIds) === JSON.stringify(currentIds);
   };
 
@@ -113,10 +126,10 @@ function CreatePizza() {
       const existingPizza = allRecipes.find((recipe) => {
         // Compare Dough (Safe check for object existence)
         const doughMatch = recipe.dough?.id === selectedDough.id;
-        
+
         // Compare Cheese
         const cheeseMatch = recipe.cheese?.id === selectedCheese.id;
-        
+
         // Compare Toppings
         const toppingsMatch = areToppingsEqual(recipe.toppings, selectedToppings);
 
@@ -125,7 +138,7 @@ function CreatePizza() {
 
       if (existingPizza) {
         console.log("Found match:", existingPizza.name);
-        
+
         // SCENARIO A: Update Vote
         const { error: updateError } = await supabase
           .from("pizza_recipes")
@@ -152,7 +165,7 @@ function CreatePizza() {
 
   const handleSaveNewPizza = async () => {
     if (!pizzaName.trim()) return alert("Please give your pizza a name!");
-    
+
     setIsSubmitting(true);
 
     const { error } = await supabase.from("pizza_recipes").insert([
@@ -223,6 +236,14 @@ const handleModalClose = () => {
 
         {/* Right Side - Step Selection */}
         <div className="step-selection">
+
+          <button
+            className="randomizer-btn"
+            onClick={handleRandomize}
+            title="Pick random ingredients"
+          >
+            🎲 Surprise Me!
+          </button>
           {/* Step 1: Dough */}
           <div
             className={`step ${currentStep === 1 ? "active" : ""}`}
