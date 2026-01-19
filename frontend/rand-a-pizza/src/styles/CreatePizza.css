@@ -12,7 +12,6 @@
   margin-bottom: 70px;
 }
 
-
 .page-title {
   text-align: center;
 }
@@ -157,7 +156,7 @@
   padding: 15px 30px;
   width: 100%;
   cursor: pointer;
-  :hover {
+  &:hover {
     background-color: #a01518;
   }
 }
@@ -190,25 +189,17 @@
 }
 
 .randomizer-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #6c5ce7; /* Purple to stand out from likely red/orange pizza theme */
-  color: white;
+  background-color: #69e64a;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
+  border-radius: 20px;
+  font-family: "Alfa Slab One", serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #111;
+  padding: 15px 30px;
+  width: 100%;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: transform 0.2s, background-color 0.2s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.randomizer-btn:hover {
-  background-color: #5b4bc4;
-  transform: translateY(-2px);
-}
-
-.randomizer-btn:active {
-  transform: translateY(0);
+  &:hover {
+    background-color: #4bb431 !important;
+  }
 }

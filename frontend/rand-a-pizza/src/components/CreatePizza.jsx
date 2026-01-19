@@ -252,7 +252,7 @@ function CreatePizza() {
           <button
             className="randomizer-btn"
             onClick={handleRandomize}
-            title="Pick random ingredients"
+            title="Generate a random Pizza"
           >
             🎲 Surprise Me!
           </button>
