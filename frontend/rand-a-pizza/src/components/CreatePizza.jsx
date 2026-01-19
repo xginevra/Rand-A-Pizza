@@ -42,6 +42,19 @@ function CreatePizza() {
     { name: "Gyros", id: "gyros" },
   ];
 
+  const handleRandomize = () => {
+    const randomDough =doughs[Math.floor(Math.random() * doughs.length)];
+    const randomCheese = cheeses[Math.floor(Math.random() * cheeses.length)];
+    const numToppings = Math.floor(Math.random() * 3) + 1;
+    const shuffledToppings = [...toppings].sort(() => 0.5 - Math.random());
+    const randomToppings = shuffledToppings.slice(0, numToppings);
+
+    setSelectedDough(randomDough);
+    setSelectedCheese(randomCheese);
+    setSelectedToppings(randomToppings);
+    setCurrentStep(3);
+  }
+
   const handleDoughSelect = (dough) => {
     setSelectedDough(dough);
     setCurrentStep(2);
@@ -83,8 +96,10 @@ function CreatePizza() {
   // Helper: robust comparison of toppings
   const areToppingsEqual = (savedToppings, currentToppings) => {
     // Safety check: ensure both are actually arrays before comparing
+
     if (!Array.isArray(savedToppings) || !Array.isArray(currentToppings))
       return false;
+
 
     if (savedToppings.length !== currentToppings.length) return false;
 
@@ -116,7 +131,9 @@ function CreatePizza() {
         const doughMatch = recipe.dough?.id === selectedDough.id;
 
         // Compare Cheese
+
         const cheeseMatch = recipe.cheese?.id === selectedCheese?.id;
+
 
         // Compare Toppings
         const toppingsMatch = areToppingsEqual(
@@ -231,6 +248,14 @@ function CreatePizza() {
 
         {/* Right Side - Step Selection */}
         <div className="step-selection">
+
+          <button
+            className="randomizer-btn"
+            onClick={handleRandomize}
+            title="Pick random ingredients"
+          >
+            🎲 Surprise Me!
+          </button>
           {/* Step 1: Dough */}
           <div
             className={`step ${currentStep === 1 ? "active" : ""}`}
