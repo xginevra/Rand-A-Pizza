@@ -32,7 +32,8 @@ jobs:
               -e SUPABASE_KEY \
               --entrypoint=sh backend-ci -c "
               uvicorn main:app --host 0.0.0.0 --port 8000 & sleep 5 && 
-              curl -f http://localhost:8000/health || curl -f http://localhost:8000/ || exit 1"
+                curl -f http://localhost:8000/api/ingredients && 
+                echo 'Backend API healthy!'"
           else
             cd frontend/rand-a-pizza
             npm ci
