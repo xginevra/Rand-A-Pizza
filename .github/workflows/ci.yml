@@ -26,7 +26,7 @@ jobs:
       - name: Build & smoke test ${{ matrix.service }}
         run: |
           if [ "${{ matrix.service }}" = "backend" ]; then
-            docker build -f backend/Dockerfile -t backend-ci . || exit 1
+            docker build -f Dockerfile_backend -t backend-ci . || exit 1
             docker run --rm \
               -e SUPABASE_URL \
               -e SUPABASE_ANON_KEY \
