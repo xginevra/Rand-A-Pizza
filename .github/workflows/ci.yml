@@ -6,17 +6,15 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-    SUPABASE_URL=${SUPABASE_URL}
-    SUPABASE_KEY=${SUPABASE_KEY}
-
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: [backend, frontend]
-
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,16 +24,17 @@ jobs:
       - name: Build & smoke test ${{ matrix.service }}
         run: |
           if [ "${{ matrix.service }}" = "backend" ]; then
-            # Build backend Docker, run health check (assumes /health endpoint or startup succeeds)
             docker build -f backend/Dockerfile -t backend-ci . || exit 1
-            docker run --rm -e SUPABASE_URL -e SUPABASE_ANON_KEY --entrypoint=sh backend-ci -c "
+            docker run --rm \
+              -e SUPABASE_URL \
+              -e SUPABASE_ANON_KEY \
+              --entrypoint=sh backend-ci -c "
               uvicorn main:app --host 0.0.0.0 --port 8000 & sleep 5 && 
               curl -f http://localhost:8000/health || curl -f http://localhost:8000/ || exit 1"
           else
-            # Frontend: npm ci + build (fails if broken deps/syntax)
             cd frontend/rand-a-pizza
             npm ci
-            npm run build --if-present || true  # Optional build
-            npm run lint --if-present || true   # Optional lint
+            npm run build --if-present || true
+            npm run lint --if-present || true
             echo "Frontend build OK"
           fi
