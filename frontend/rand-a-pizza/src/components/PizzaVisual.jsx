@@ -1,10 +1,9 @@
-import React from "react";
-import "../styles/CreatePizza.css"; // We reuse the styles for the stack
+import "../styles/PizzaVisual.css"; // We reuse the styles for the stack
 
 const PizzaVisual = ({ dough, cheese, toppings, scale = 1 }) => {
     return (
         <div
-            className="pizza-stack"
+            className="stack"
             style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
         >
             <img src="/ingredients/plate.png" alt="Pizza Base" className="pizza-layer base-layer" />

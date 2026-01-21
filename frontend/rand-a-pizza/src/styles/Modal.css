@@ -77,3 +77,46 @@
   font-size: 16px;
   line-height: 1.6;
 }
+.modal-cards-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.modal-card {
+  flex: 1;
+  min-width: 150px;
+  background-color: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.modal-card:hover {
+  background-color: #222;
+  border-color: #ffce63;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(255, 218, 53, 0.3);
+}
+
+.modal-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-family: "Alfa Slab One", serif;
+  color: #fff;
+}
+
+.modal-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.5;
+}
+
+.modal-card:hover h3 {
+  color: #ffce63;
+}

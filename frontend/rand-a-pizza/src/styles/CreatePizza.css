@@ -5,23 +5,23 @@
 }
 
 .createpizza-container {
-  padding: 0 20px 200px 20px;
+  padding: 0 80px 0 80px;
+  background-image: url("RAND A PIZZA bg - flipped.png");
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 50px;
 }
 
 .page-heading {
-  margin-bottom: 70px;
-}
-
-.page-title {
-  text-align: center;
+  padding: 0 80px;
+  margin-bottom: 50px;
 }
 
 .pizza-builder {
   display: flex;
   gap: 20px;
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  align-items: center;
 }
 
 /* Left Side - Pizza Visual */
@@ -32,16 +32,16 @@
   justify-content: center;
   align-self: start;
   border-radius: 10px;
-  padding: 40px;
+  margin-left: 40px;
 }
 
 .pizza-stack {
   position: relative;
-  width: 500px;
-  height: 500px;
+  width: 800px;
+  height: 700px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: start;
+  align-items: start;
 }
 
 .pizza-layer {
@@ -69,11 +69,20 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
+  h3 {
+    align-self: center;
+    margin-top: -10px;
+    margin-bottom: -5px;
+  }
 }
 
 .step {
   border: 2px solid #3d3d3d;
   border-radius: 30px;
+  background-color: #111;
   padding: 20px 30px 30px 30px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -81,7 +90,8 @@
 
 .step.active {
   border-color: #ffce63;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
+  background-color: #1f1f1f;
+  box-shadow: 0 5px 15px rgba(255, 218, 53, 0.3);
 }
 
 .step h3 {
@@ -193,17 +203,25 @@
 }
 
 .randomizer-btn {
-  background-color: #69e64a;
-  border: none;
+  background-color: transparent;
+  border: 2px solid #d91e21;
   border-radius: 20px;
   font-family: "Alfa Slab One", serif;
   font-weight: 800;
   font-size: 1.2rem;
-  color: #111;
+  color: white;
   padding: 15px 30px;
   width: 100%;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+
   &:hover {
-    background-color: #4bb431 !important;
+    background-color: #d91e21 !important;
+    border: 2px solid #d91e21;
+  }
+
+  &:active {
+    background-color: #a01518 !important;
+    border: 2px solid #a01518;
   }
 }
