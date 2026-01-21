@@ -98,9 +98,9 @@
 
 .modal-card:hover {
   background-color: #222;
-  border-color: #ff6b35;
+  border-color: #ffce63;
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 5px 15px rgba(255, 218, 53, 0.3);
 }
 
 .modal-card h3 {
@@ -118,5 +118,5 @@
 }
 
 .modal-card:hover h3 {
-  color: #ff6b35;
+  color: #ffce63;
 }

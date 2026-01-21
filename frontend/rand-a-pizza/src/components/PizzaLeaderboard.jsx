@@ -100,16 +100,10 @@ function PizzaLeaderboard() {
 
               <div className="vote-buttons">
                 <button
-                  className="vote-btn no"
-                  onClick={() => handleVote(pizza.id, pizza.votes, false)}
-                >
-                  👎 No
-                </button>
-                <button
                   className="vote-btn yes"
                   onClick={() => handleVote(pizza.id, pizza.votes, true)}
                 >
-                  👍 Yes
+                  👍 Vote
                 </button>
               </div>
             </div>
