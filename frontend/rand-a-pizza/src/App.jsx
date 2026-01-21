@@ -6,14 +6,16 @@ import Voting from "./pages/Voting";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/create-pizza" element={<CreateAPizza />} />
-        <Route path="voting" element={<Voting />} />
-      </Routes>
-    </Router>
-  )
+    <div className="page">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/create-pizza" element={<CreateAPizza />} />
+          <Route path="/voting" element={<Voting />} />
+        </Routes>
+      </Router>
+    </div>
+  );
 }
 
 export default App;

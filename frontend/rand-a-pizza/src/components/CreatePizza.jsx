@@ -16,10 +16,10 @@ function CreatePizza() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const doughs = [
-    { name: "Classic Wheat", id: "cla" },
-    { name: "Roman", id: "rom" },
-    { name: "Neapolitan", id: "nea" },
-    { name: "American/Flamkuchen", id: "ame" },
+    { name: "Classic Wheat", id: "cla", desc: "Standard yeast" },
+    { name: "Roman", id: "rom", desc: "Thin-crispy" },
+    { name: "Neapolitan", id: "nea", desc: "Airy rim" },
+    { name: "American/Flamkuchen", id: "ame", desc: "Thicker/regional" },
   ];
   const cheeses = [
     { name: "Mozzarella", id: "moz" },
@@ -43,7 +43,7 @@ function CreatePizza() {
   ];
 
   const handleRandomize = () => {
-    const randomDough =doughs[Math.floor(Math.random() * doughs.length)];
+    const randomDough = doughs[Math.floor(Math.random() * doughs.length)];
     const randomCheese = cheeses[Math.floor(Math.random() * cheeses.length)];
     const numToppings = Math.floor(Math.random() * 3) + 1;
     const shuffledToppings = [...toppings].sort(() => 0.5 - Math.random());
@@ -53,7 +53,7 @@ function CreatePizza() {
     setSelectedCheese(randomCheese);
     setSelectedToppings(randomToppings);
     setCurrentStep(3);
-  }
+  };
 
   const handleDoughSelect = (dough) => {
     setSelectedDough(dough);
@@ -90,8 +90,7 @@ function CreatePizza() {
     setCurrentStep(stepNumber);
   };
 
-  const isFormComplete =
-    selectedDough && selectedToppings.length > 0;
+  const isFormComplete = selectedDough && selectedToppings.length > 0;
 
   // Helper: robust comparison of toppings
   const areToppingsEqual = (savedToppings, currentToppings) => {
@@ -99,7 +98,6 @@ function CreatePizza() {
 
     if (!Array.isArray(savedToppings) || !Array.isArray(currentToppings))
       return false;
-
 
     if (savedToppings.length !== currentToppings.length) return false;
 
@@ -133,7 +131,6 @@ function CreatePizza() {
         // Compare Cheese
 
         const cheeseMatch = recipe.cheese?.id === selectedCheese?.id;
-
 
         // Compare Toppings
         const toppingsMatch = areToppingsEqual(
@@ -212,50 +209,16 @@ function CreatePizza() {
   return (
     <div className="createpizza-container">
       <div className="pizza-builder">
-        {/* Left Side - Pizza Visual */}
-        <div className="pizza-visual">
-          <div className="pizza-stack">
-            <img
-              src="/ingredients/plate.png"
-              alt="Pizza Base"
-              className="pizza-layer base-layer"
-            />
-            {selectedDough && (
-              <img
-                src={`/ingredients/dough/d_${selectedDough.id}.png`}
-                alt={selectedDough.name}
-                className="pizza-layer dough-layer"
-              />
-            )}
-            {selectedCheese && (
-              <img
-                src={`/ingredients/cheese/c_${selectedCheese.id}.png`}
-                alt={selectedCheese.name}
-                className="pizza-layer cheese-layer"
-              />
-            )}
-            {selectedToppings.map((topping, index) => (
-              <img
-                key={topping.id}
-                src={`/ingredients/toppings/t_${topping.id}.png`}
-                alt={topping.name}
-                className="pizza-layer topping-layer"
-                style={{ zIndex: 30 + index }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Right Side - Step Selection */}
+        {/* Left Side */}
         <div className="step-selection">
-
           <button
             className="randomizer-btn"
             onClick={handleRandomize}
-            title="Pick random ingredients"
+            title="Generate a random Pizza"
           >
             🎲 Surprise Me!
           </button>
+          <h3>or</h3>
           {/* Step 1: Dough */}
           <div
             className={`step ${currentStep === 1 ? "active" : ""}`}
@@ -263,7 +226,10 @@ function CreatePizza() {
           >
             <h3>Step 1: Select Dough</h3>
             {selectedDough && (
-              <p className="selected">✓ {selectedDough.name}</p>
+              <p className="selected">
+                ✓ {selectedDough.name}:{" "}
+                <span className="dough-desc">{selectedDough.desc}</span>
+              </p>
             )}
             {currentStep === 1 && (
               <div className="options">
@@ -274,6 +240,7 @@ function CreatePizza() {
                       selectedDough?.id === dough.id ? "selected" : ""
                     }`}
                     onClick={() => handleDoughSelect(dough)}
+                    title={dough.desc}
                   >
                     {dough.name}
                   </button>
@@ -376,41 +343,77 @@ function CreatePizza() {
             </button>
           )}
         </div>
-      </div>
-
-      {/* MODAL 1: Name Your Pizza (Only appears if pizza is new) */}
-      <Modal isOpen={isNameInputOpen} onClose={() => setIsNameInputOpen(false)}>
-        <h2>🧑‍🍳 A New Creation!</h2>
-        <p>This exact combination hasn't been made yet. Give it a name!</p>
-        <input
-          type="text"
-          placeholder="e.g. The Midnight Special"
-          value={pizzaName}
-          onChange={(e) => setPizzaName(e.target.value)}
-          className="pizza-name-input"
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginTop: "10px",
-            marginBottom: "20px",
-            fontSize: "1rem",
-          }}
-        />
-        <button
-          className="submit-btn"
-          onClick={handleSaveNewPizza}
-          disabled={isSubmitting}
+        {/* MODAL 1: Name Your Pizza (Only appears if pizza is new) */}
+        <Modal
+          isOpen={isNameInputOpen}
+          onClose={() => setIsNameInputOpen(false)}
         >
-          {isSubmitting ? "Saving..." : "Save New Pizza"}
-        </button>
-      </Modal>
+          <h2>🧑‍🍳 A New Creation!</h2>
+          <p>This exact combination hasn't been made yet. Give it a name!</p>
+          <input
+            type="text"
+            placeholder="e.g. The Midnight Special"
+            value={pizzaName}
+            onChange={(e) => setPizzaName(e.target.value)}
+            className="pizza-name-input"
+            style={{
+              width: "100%",
+              padding: "10px",
+              marginTop: "10px",
+              marginBottom: "20px",
+              fontSize: "1rem",
+            }}
+          />
+          <button
+            className="submit-btn"
+            onClick={handleSaveNewPizza}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : "Save New Pizza"}
+          </button>
+        </Modal>
 
-      {/* MODAL 2: Success (Appears for both Votes and New Creations) */}
-      <Modal isOpen={isSuccessModalOpen} onClose={handleModalClose}>
-        <h2>🍕 Awesome!</h2>
-        <p>{successMessage}</p>
-        <p>Thank you for your feedback.</p>
-      </Modal>
+        {/* MODAL 2: Success (Appears for both Votes and New Creations) */}
+        <Modal isOpen={isSuccessModalOpen} onClose={handleModalClose}>
+          <h2>🍕 Awesome!</h2>
+          <p>{successMessage}</p>
+          <p>Thank you for your feedback.</p>
+        </Modal>
+
+        {/* Right Side */}
+        <div className="pizza-visual">
+          <div className="pizza-stack">
+            <img
+              src="/ingredients/plate.png"
+              alt="Pizza Base"
+              className="pizza-layer base-layer"
+            />
+            {selectedDough && (
+              <img
+                src={`/ingredients/dough/d_${selectedDough.id}.png`}
+                alt={selectedDough.name}
+                className="pizza-layer dough-layer"
+              />
+            )}
+            {selectedCheese && (
+              <img
+                src={`/ingredients/cheese/c_${selectedCheese.id}.png`}
+                alt={selectedCheese.name}
+                className="pizza-layer cheese-layer"
+              />
+            )}
+            {selectedToppings.map((topping, index) => (
+              <img
+                key={topping.id}
+                src={`/ingredients/toppings/t_${topping.id}.png`}
+                alt={topping.name}
+                className="pizza-layer topping-layer"
+                style={{ zIndex: 30 + index }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

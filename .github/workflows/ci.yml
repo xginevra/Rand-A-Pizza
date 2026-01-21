@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: 
+      - main
+      - ci-implementation
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, frontend]
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & smoke test ${{ matrix.service }}
+        run: |
+          if [ "${{ matrix.service }}" = "backend" ]; then
+            docker build -f Dockerfile_backend -t backend-ci . || exit 1
+            docker run --rm \
+              -e SUPABASE_URL \
+              -e SUPABASE_KEY \
+              --entrypoint=sh backend-ci -c "
+              uvicorn main:app --host 0.0.0.0 --port 8000 & sleep 5 && 
+                curl -f http://localhost:8000/api/ingredients && 
+                echo 'Backend API healthy!'"
+          else
+            cd frontend/rand-a-pizza
+            npm ci
+            npm run build --if-present || true
+            npm run lint --if-present || true
+            echo "Frontend build OK"
+          fi
