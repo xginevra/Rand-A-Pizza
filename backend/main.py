@@ -66,7 +66,7 @@ def get_current_user(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid token")
     return user.user
 
-@app.post("/register")
+@app.post("/api/register")
 def register_user(user: UserCredentials, request: Request):
     try:
         host = request.headers.get("x-forwarded-host") or request.headers.get("X-Frontend-URL") or request.headers.get("host") or "localhost:3000"
@@ -89,7 +89,7 @@ def register_user(user: UserCredentials, request: Request):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/login")
+@app.post("/api/login")
 def login_user(user: UserCredentials):
     try:
         result = supabase.auth.sign_in_with_password({"email": user.email, "password": user.password})
@@ -99,7 +99,7 @@ def login_user(user: UserCredentials):
     except Exception as e:
         raise HTTPException(status_code=401, detail=str(e))
 
-@app.get("/profile")
+@app.get("/api/profile")
 def get_profile(user=Depends(get_current_user)):
     uid = user.id
     response = supabase.table("userdata").select("*").eq("user_id", uid).maybe_single().execute()
