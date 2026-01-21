@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import os
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from fastapi import Depends
+import time
 import random
 from dotenv import load_dotenv
 
@@ -44,6 +46,77 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+class UserCredentials(BaseModel):
+    email: str
+    password: str
+
+class ProfileData(BaseModel):
+    email: Optional[str] = None
+    company: Optional[str] = None
+    
+    # Add other profile fields as needed
+
+def get_current_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = authorization[7:]
+    user = supabase.auth.get_user(token)
+    if user.user is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return user.user
+
+@app.post("/register")
+def register_user(user: UserCredentials, request: Request):
+    try:
+        host = request.headers.get("x-forwarded-host") or request.headers.get("X-Frontend-URL") or request.headers.get("host") or "localhost:3000"
+        scheme = request.headers.get("x-forwarded-proto", "http")
+        base_url = f"{scheme}://{host}"
+        redirect_url = f"{base_url}/emailconfirmed"
+
+        result = supabase.auth.sign_up(
+            {
+                "email": user.email,
+                "password": user.password,
+                "options": {
+                    "email_redirect_to": redirect_url
+                }
+            }
+        )
+        if result.user is None:
+            raise HTTPException(status_code=400, detail="Registration failed")
+        return {"message": "User registered", "id": result.user.id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/login")
+def login_user(user: UserCredentials):
+    try:
+        result = supabase.auth.sign_in_with_password({"email": user.email, "password": user.password})
+        if result.session is None:
+            raise HTTPException(status_code=401, detail="Login failed")
+        return {"access_token": result.session.access_token}
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+@app.get("/profile")
+def get_profile(user=Depends(get_current_user)):
+    uid = user.id
+    response = supabase.table("userdata").select("*").eq("user_id", uid).maybe_single().execute()
+    data = getattr(response, "data", None)
+
+    if not data:
+        placeholder = {
+            "user_id": uid,
+            "email": user.email,
+            "company": "Please fill in your company",
+        }
+        supabase.table("userdata").insert(placeholder).execute()
+        time.sleep(1)
+        response = supabase.table("userdata").select("*").eq("user_id", uid).maybe_single().execute()
+        data = getattr(response, "data", None)
+
+    return data
 
 # Pydantic models
 class IngredientsRequest(BaseModel):
