@@ -33,7 +33,7 @@ function Dashboard() {
 
   const fetchStats = async (token) => {
     try {
-      const response = await fetch("http://localhost:8000/api/business/stats", {
+      const response = await fetch("/api/business/stats", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
