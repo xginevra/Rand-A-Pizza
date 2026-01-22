@@ -17,8 +17,8 @@ import {
 function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedPizza, setSelectedPizza] = useState(null);
   const navigate = useNavigate();
-
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
   useEffect(() => {
@@ -59,6 +59,16 @@ function Dashboard() {
     navigate("/login");
   };
 
+  const handleBarClick = (data) => {
+    // Recharts passes the data object of the clicked bar
+    if (data && data.payload_ingredients) {
+      setSelectedPizza({
+        name: data.name,
+        ...data.payload_ingredients
+      });
+    }
+  };
+
   if (loading) return <div>Loading Analytics...</div>;
 
   return (
@@ -84,22 +94,26 @@ function Dashboard() {
 
       {/* Charts Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
-        
-        {/* Chart 1: Top 5 Highest Voted Pizzas */}
-        <div style={chartContainerStyle}>
-          <h3>🏆 Top Rated Pizzas</h3>
+<div style={chartContainerStyle}>
+          <h3>🏆 Top Rated Pizzas (Click bars for details)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={stats?.vote_distribution}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
-              <Tooltip />
+              <Tooltip cursor={{fill: 'transparent'}} />
               <Legend />
-              <Bar dataKey="votes" fill="#8884d8" name="Votes" />
+              {/* 3. NEW: Added onClick and cursor pointer */}
+              <Bar
+                dataKey="votes"
+                fill="#8884d8"
+                name="Votes"
+                onClick={handleBarClick}
+                style={{ cursor: "pointer" }}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
-
         {/* Chart 2: Most Popular Toppings */}
         <div style={chartContainerStyle}>
           <h3>🍄 Most Popular Toppings</h3>
@@ -129,7 +143,6 @@ function Dashboard() {
   );
 }
 
-// Simple internal styles for the dashboard
 const cardStyle = {
   background: "#f9f9f9",
   padding: "20px",
@@ -144,6 +157,29 @@ const chartContainerStyle = {
   padding: "20px",
   borderRadius: "8px",
   border: "1px solid #ddd",
+};
+
+
+const modalOverlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000
+};
+
+const modalContentStyle = {
+    background: "white",
+    padding: "2rem",
+    borderRadius: "10px",
+    width: "300px",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+    minHeight: "200px"
 };
 
 export default Dashboard;
