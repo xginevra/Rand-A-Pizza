@@ -14,6 +14,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import PizzaVisual from "../components/PizzaVisual";
+import "../styles/Dashboard.css";
+
 
 function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -148,8 +150,44 @@ function Dashboard() {
 
       {selectedPizza && (
         <div style={{ marginTop: "40px" }}>
-          <h2>Selected Pizza Details</h2>
-          <div className="selected-pizza-card" style={{ maxWidth: "400px", margin: "20px 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <h2 style={{ width: "auto" }}>Selected Pizza Details</h2>
+            <button
+              onClick={() => setSelectedPizza(null)}
+              style={{ padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
+            >
+              Clear Selection
+            </button>
+          </div>
+          <div className="selected-pizza-card">
+
+            <div className="card-info">
+              <h2>{selectedPizza.name}</h2>
+
+              <div className="card-ingredients">
+                <h3>Dough</h3>
+                <div className="card-ingredients">
+                  {selectedPizza.dough && (
+                    <span className="ing-tag dough">{selectedPizza.dough.name}</span>
+                  )}
+                </div>
+                <h3>Cheese</h3>
+                <div className="card-ingredients">
+                  {selectedPizza.cheese && (
+                    <span className="ing-tag cheese">{selectedPizza.cheese.name}</span>
+                  )}
+                </div>
+                <h3>Toppings</h3>
+                <div className="card-ingredients">
+                  {selectedPizza.toppings && selectedPizza.toppings.map((t) => (
+                    <span key={t.id} className="ing-tag topping">
+                      {t.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="card-visual-wrapper">
               <PizzaVisual
                 dough={selectedPizza.dough}
@@ -159,30 +197,8 @@ function Dashboard() {
               />
             </div>
 
-            <div className="card-ingredients">
-              {selectedPizza.dough && (
-                <span className="ing-tag dough">{selectedPizza.dough.name}</span>
-              )}
-              {selectedPizza.cheese && (
-                <span className="ing-tag cheese">{selectedPizza.cheese.name}</span>
-              )}
-              {selectedPizza.toppings && selectedPizza.toppings.map((t) => (
-                <span key={t.id} className="ing-tag topping">
-                  {t.name}
-                </span>
-              ))}
-            </div>
-
-            <div className="card-info">
-              <h3>{selectedPizza.name}</h3>
-            </div>
           </div>
-          <button
-            onClick={() => setSelectedPizza(null)}
-            style={{ padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
-          >
-            Clear Selection
-          </button>
+
         </div>
       )}
     </div>
@@ -190,19 +206,20 @@ function Dashboard() {
 }
 
 const cardStyle = {
-  background: "#f9f9f9",
+  background: "#1f1f1f",
   padding: "20px",
-  borderRadius: "8px",
+  borderRadius: "15px",
   flex: 1,
   boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
   textAlign: "center"
 };
 
 const chartContainerStyle = {
-  background: "#fff",
+  background: "#1f1f1f",
   padding: "20px",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
+  borderRadius: "15px",
+  color: "white",
+
 };
 
 
