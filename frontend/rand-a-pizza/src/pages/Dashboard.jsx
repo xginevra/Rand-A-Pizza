@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import PizzaVisual from "../components/PizzaVisual";
+import NavBar from "../components/NavBar"
 import "../styles/Dashboard.css";
 
 
@@ -84,124 +85,129 @@ function Dashboard() {
   if (loading) return <div>Loading Analytics...</div>;
 
   return (
-    <div className="dashboard-container" style={{ padding: "2rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>🍕 Business Dashboard</h1>
+    <>
+      <NavBar>
         <button onClick={handleLogout} style={{ padding: "8px 16px", cursor: "pointer" }}>
           Logout
         </button>
-      </div>
+      </NavBar>
+      <div className="dashboard-container" style={{ padding: "2rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h1>🍕 Business Dashboard</h1>
 
-      <div style={{ display: "flex", gap: "20px", marginBottom: "40px" }}>
-        <div style={cardStyle}>
-          <h3>Total Recipes Created</h3>
-          <h2 style={{ color: "#FF8042" }}>{stats?.total_pizzas}</h2>
-        </div>
-        <div style={cardStyle}>
-          <h3>Total Community Votes</h3>
-          <h2 style={{ color: "#00C49F" }}>{stats?.total_votes}</h2>
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
-        <div style={chartContainerStyle}>
-          <h3>🏆 Top Rated Pizzas (Click bars for details)</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={stats?.vote_distribution}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip cursor={{ fill: 'transparent' }} />
-              <Legend />
-              <Bar
-                dataKey="votes"
-                fill="#8884d8"
-                name="Votes"
-                onClick={handleBarClick}
-                style={{ cursor: "pointer" }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={chartContainerStyle}>
-          <h3>🍄 Most Popular Toppings</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={stats?.top_toppings}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="count"
-              >
-                {stats?.top_toppings.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
         </div>
 
-      </div>
-
-      {selectedPizza && (
-        <div style={{ marginTop: "40px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h2 style={{ width: "auto" }}>Selected Pizza Details</h2>
-            <button
-              onClick={() => setSelectedPizza(null)}
-              style={{ padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
-            >
-              Clear Selection
-            </button>
+        <div style={{ display: "flex", gap: "20px", marginBottom: "40px" }}>
+          <div style={cardStyle}>
+            <h3>Total Recipes Created</h3>
+            <h2 style={{ color: "#FF8042" }}>{stats?.total_pizzas}</h2>
           </div>
-          <div className="selected-pizza-card">
+          <div style={cardStyle}>
+            <h3>Total Community Votes</h3>
+            <h2 style={{ color: "#00C49F" }}>{stats?.total_votes}</h2>
+          </div>
+        </div>
 
-            <div className="card-info">
-              <h2>{selectedPizza.name}</h2>
-
-              <div className="card-ingredients">
-                <h3>Dough</h3>
-                <div className="card-ingredients">
-                  {selectedPizza.dough && (
-                    <span className="ing-tag dough">{selectedPizza.dough.name}</span>
-                  )}
-                </div>
-                <h3>Cheese</h3>
-                <div className="card-ingredients">
-                  {selectedPizza.cheese && (
-                    <span className="ing-tag cheese">{selectedPizza.cheese.name}</span>
-                  )}
-                </div>
-                <h3>Toppings</h3>
-                <div className="card-ingredients">
-                  {selectedPizza.toppings && selectedPizza.toppings.map((t) => (
-                    <span key={t.id} className="ing-tag topping">
-                      {t.name}
-                    </span>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
+          <div style={chartContainerStyle}>
+            <h3>🏆 Top Rated Pizzas (Click bars for details)</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={stats?.vote_distribution}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip cursor={{ fill: 'transparent' }} />
+                <Legend />
+                <Bar
+                  dataKey="votes"
+                  fill="#8884d8"
+                  name="Votes"
+                  onClick={handleBarClick}
+                  style={{ cursor: "pointer" }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={chartContainerStyle}>
+            <h3>🍄 Most Popular Toppings</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={stats?.top_toppings}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="count"
+                >
+                  {stats?.top_toppings.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+        </div>
+
+        {selectedPizza && (
+          <div style={{ marginTop: "40px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ width: "auto" }}>Selected Pizza Details</h2>
+              <button
+                onClick={() => setSelectedPizza(null)}
+                style={{ padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
+              >
+                Clear Selection
+              </button>
+            </div>
+            <div className="selected-pizza-card">
+
+              <div className="card-info">
+                <h2>{selectedPizza.name}</h2>
+
+                <div className="card-ingredients">
+                  <h3>Dough</h3>
+                  <div className="card-ingredients">
+                    {selectedPizza.dough && (
+                      <span className="ing-tag dough">{selectedPizza.dough.name}</span>
+                    )}
+                  </div>
+                  <h3>Cheese</h3>
+                  <div className="card-ingredients">
+                    {selectedPizza.cheese && (
+                      <span className="ing-tag cheese">{selectedPizza.cheese.name}</span>
+                    )}
+                  </div>
+                  <h3>Toppings</h3>
+                  <div className="card-ingredients">
+                    {selectedPizza.toppings && selectedPizza.toppings.map((t) => (
+                      <span key={t.id} className="ing-tag topping">
+                        {t.name}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="card-visual-wrapper">
-              <PizzaVisual
-                dough={selectedPizza.dough}
-                cheese={selectedPizza.cheese}
-                toppings={selectedPizza.toppings}
-                scale={1}
-              />
+              <div className="card-visual-wrapper">
+                <PizzaVisual
+                  dough={selectedPizza.dough}
+                  cheese={selectedPizza.cheese}
+                  toppings={selectedPizza.toppings}
+                  scale={1}
+                />
+              </div>
+
             </div>
 
           </div>
-
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 
