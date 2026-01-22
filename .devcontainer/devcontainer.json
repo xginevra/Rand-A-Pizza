@@ -1,34 +1,18 @@
 {
-  "name": "Rand-A-Pizza",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "backend",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "forwardPorts": [3000, 8000],
-  "portsAttributes": {
-    "3000": {
-      "label": "Frontend",
-      "onAutoForward": "notify"
+    "name": "Rand-A-Pizza",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "backend",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "forwardPorts": [3000, 8000],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
     },
-    "8000": {
-      "label": "Backend API",
-      "onAutoForward": "notify"
-    }
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.11"
-    }
-  },
-  "postCreateCommand": "cd frontend/rand-a-pizza && npm install && npm run dev",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python"
-      ]
-    }
-  },
-  "remoteEnv": {
-    "SUPABASE_URL": "${localEnv:SUPABASE_URL}",
-    "SUPABASE_KEY": "${localEnv:SUPABASE_KEY}"
+    "remoteEnv": {
+      "SUPABASE_URL": "${localEnv:SUPABASE_URL}",
+      "SUPABASE_KEY": "${localEnv:SUPABASE_KEY}"
   }
 }

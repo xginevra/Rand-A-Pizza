@@ -1,6 +1,3 @@
-# docker-compose.yml - Rand-A-Pizza
-version: "3.8"
-
 services:
   backend:
     build:
@@ -9,14 +6,13 @@ services:
     container_name: backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/backend
     environment:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ./backend:/backend
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    # restart: unless-stopped
-    # env_file: .env  # Local .env (ignored by Git)
+    # command: sleep infinity  # Keep the container running
 
   frontend:
     build:
@@ -27,6 +23,9 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/frontend  # Mount the frontend folder into the container
-    # stdin_open: true
-    # tty: true
-    # command: sleep infinity  # Keep the container running
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      
+
+
