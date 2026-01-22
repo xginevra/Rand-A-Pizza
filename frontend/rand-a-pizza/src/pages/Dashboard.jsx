@@ -13,7 +13,7 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import PizzaVisual from "../components/PizzaVisual";
+import PizzaVisualDash from "../components/PizzaVisualDash";
 import NavBar from "../components/NavBar"
 import "../styles/Dashboard.css";
 
@@ -194,7 +194,7 @@ function Dashboard() {
               </div>
 
               <div className="card-visual-wrapper">
-                <PizzaVisual
+                <PizzaVisualDash
                   dough={selectedPizza.dough}
                   cheese={selectedPizza.cheese}
                   toppings={selectedPizza.toppings}
