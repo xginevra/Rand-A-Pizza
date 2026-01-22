@@ -235,33 +235,18 @@ def get_dashboard_stats(user=Depends(get_current_user)):
 
     vote_distribution = []
     for r in sorted_by_votes:
-        # 1. Safely extract ingredient names
-        # (We check if they are dictionaries or just strings to prevent errors)
+        # Extract full ingredient objects (with id and name)
         dough_obj = r.get("dough", {})
-        dough_name = dough_obj.get("name") if isinstance(dough_obj, dict) else "Original"
-
         cheese_obj = r.get("cheese", {})
-        cheese_name = cheese_obj.get("name") if isinstance(cheese_obj, dict) else "Mozzarella"
-
         toppings_list = r.get("toppings", [])
-        topping_names = []
-        if isinstance(toppings_list, list):
-            for t in toppings_list:
-                if isinstance(t, dict):
-                    topping_names.append(t.get("name"))
-                else:
-                    topping_names.append(str(t))
 
-        # 2. Build the detailed object
+        # Build the detailed object with full ingredient data
         vote_distribution.append({
             "name": r.get("name", f"Pizza #{r.get('id')}"), 
             "votes": r.get("votes", 0),
-            # Add the payload here
-            "payload_ingredients": {
-                "dough": dough_name,
-                "cheese": cheese_name,
-                "toppings": topping_names
-            }
+            "dough": dough_obj,
+            "cheese": cheese_obj,
+            "toppings": toppings_list
         })
 
     return {

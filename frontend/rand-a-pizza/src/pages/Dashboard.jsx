@@ -13,6 +13,7 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
+import PizzaVisual from "../components/PizzaVisual";
 
 function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -59,13 +60,22 @@ function Dashboard() {
     navigate("/login");
   };
 
+
   const handleBarClick = (data) => {
-    // Recharts passes the data object of the clicked bar
-    if (data && data.payload_ingredients) {
+    console.log("Clicked Bar Data!", data);
+
+    if (data.dough || data.cheese || data.toppings) {
+      console.log("✅ Ingredients found:", data);
       setSelectedPizza({
-        name: data.name,
-        ...data.payload_ingredients
+        name: data.name || "Pizza",
+        dough: data.dough,
+        cheese: data.cheese,
+        toppings: data.toppings
       });
+    } else {
+      console.error("❌ Ingredient data is MISSING from the data.");
+      console.log("Did you restart the Python backend after adding the new code?");
+      alert("Error: Ingredients data is missing. Please check the console.");
     }
   };
 
@@ -80,7 +90,6 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* Summary Cards */}
       <div style={{ display: "flex", gap: "20px", marginBottom: "40px" }}>
         <div style={cardStyle}>
           <h3>Total Recipes Created</h3>
@@ -92,18 +101,16 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Charts Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
-<div style={chartContainerStyle}>
+        <div style={chartContainerStyle}>
           <h3>🏆 Top Rated Pizzas (Click bars for details)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={stats?.vote_distribution}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
-              <Tooltip cursor={{fill: 'transparent'}} />
+              <Tooltip cursor={{ fill: 'transparent' }} />
               <Legend />
-              {/* 3. NEW: Added onClick and cursor pointer */}
               <Bar
                 dataKey="votes"
                 fill="#8884d8"
@@ -114,7 +121,6 @@ function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        {/* Chart 2: Most Popular Toppings */}
         <div style={chartContainerStyle}>
           <h3>🍄 Most Popular Toppings</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -139,6 +145,46 @@ function Dashboard() {
         </div>
 
       </div>
+
+      {selectedPizza && (
+        <div style={{ marginTop: "40px" }}>
+          <h2>Selected Pizza Details</h2>
+          <div className="selected-pizza-card" style={{ maxWidth: "400px", margin: "20px 0" }}>
+            <div className="card-visual-wrapper">
+              <PizzaVisual
+                dough={selectedPizza.dough}
+                cheese={selectedPizza.cheese}
+                toppings={selectedPizza.toppings}
+                scale={1}
+              />
+            </div>
+
+            <div className="card-ingredients">
+              {selectedPizza.dough && (
+                <span className="ing-tag dough">{selectedPizza.dough.name}</span>
+              )}
+              {selectedPizza.cheese && (
+                <span className="ing-tag cheese">{selectedPizza.cheese.name}</span>
+              )}
+              {selectedPizza.toppings && selectedPizza.toppings.map((t) => (
+                <span key={t.id} className="ing-tag topping">
+                  {t.name}
+                </span>
+              ))}
+            </div>
+
+            <div className="card-info">
+              <h3>{selectedPizza.name}</h3>
+            </div>
+          </div>
+          <button
+            onClick={() => setSelectedPizza(null)}
+            style={{ padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -161,25 +207,25 @@ const chartContainerStyle = {
 
 
 const modalOverlayStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0,0,0,0.5)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000
 };
 
 const modalContentStyle = {
-    background: "white",
-    padding: "2rem",
-    borderRadius: "10px",
-    width: "300px",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-    minHeight: "200px"
+  background: "white",
+  padding: "2rem",
+  borderRadius: "10px",
+  width: "300px",
+  boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+  minHeight: "200px"
 };
 
 export default Dashboard;
