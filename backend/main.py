@@ -8,6 +8,7 @@ from fastapi import Depends
 import time
 import random
 from dotenv import load_dotenv
+from collections import Counter
 
 app = FastAPI(title="Rand-A-Pizza API")
 
@@ -200,3 +201,39 @@ def get_user_recipes(user_id: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    
+@app.get("/api/business/stats")
+def get_dashboard_stats(user=Depends(get_current_user)):
+    response = supabase.table("pizza_recipes").select("*").execute()
+    recipes = response.data
+
+    if not recipes:
+        return {"total_pizzas": 0, "top_toppings": [], "vote_distribution": []}
+
+    # 2. Aggregate Data
+    total_pizzas = len(recipes)
+    total_votes = sum(r.get('votes', 0) for r in recipes)
+
+    topping_counter = Counter()
+    for r in recipes:
+        toppings = r.get("toppings", [])
+        if isinstance(toppings, list):
+            for t in toppings:
+                name = t.get("name") if isinstance(t, dict) else t
+                if name:
+                    topping_counter[name] += 1
+
+    top_toppings = [{"name": k, "count": v} for k, v in topping_counter.most_common(5)]
+
+    sorted_by_votes = sorted(recipes, key=lambda x: x.get("votes", 0), reverse=True)[:5]
+    vote_distribution = [
+        {"name": r.get("name", f"Pizza #{r.get('id')}"), "votes": r.get("votes", 0)} 
+        for r in sorted_by_votes
+    ]
+
+    return {
+        "total_pizzas": total_pizzas,
+        "total_votes": total_votes,
+        "top_toppings": top_toppings,
+        "vote_distribution": vote_distribution
+    }
