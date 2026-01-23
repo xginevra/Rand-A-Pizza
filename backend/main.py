@@ -231,6 +231,24 @@ def get_dashboard_stats(user=Depends(get_current_user)):
         for r in sorted_by_votes
     ]
 
+    sorted_by_votes = sorted(recipes, key=lambda x: x.get("votes", 0), reverse=True)[:5]
+
+    vote_distribution = []
+    for r in sorted_by_votes:
+        # Extract full ingredient objects (with id and name)
+        dough_obj = r.get("dough", {})
+        cheese_obj = r.get("cheese", {})
+        toppings_list = r.get("toppings", [])
+
+        # Build the detailed object with full ingredient data
+        vote_distribution.append({
+            "name": r.get("name", f"Pizza #{r.get('id')}"), 
+            "votes": r.get("votes", 0),
+            "dough": dough_obj,
+            "cheese": cheese_obj,
+            "toppings": toppings_list
+        })
+
     return {
         "total_pizzas": total_pizzas,
         "total_votes": total_votes,

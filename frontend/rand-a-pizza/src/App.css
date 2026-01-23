@@ -55,6 +55,8 @@ body {
   z-index: 10;
   display: flex;
   padding: 40px 80px;
+  align-content: center;
+  justify-content: space-between;
 }
 
 .navbar-logo {

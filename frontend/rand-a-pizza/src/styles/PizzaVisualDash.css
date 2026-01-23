@@ -1,0 +1,26 @@
+.pizza-stack {
+  width: 800px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.pizza-layer {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dough-layer {
+  z-index: 10;
+}
+
+.cheese-layer {
+  z-index: 20;
+}
+
+.topping-layer {
+  z-index: 30;
+}

@@ -12,8 +12,6 @@ function Login() {
     setError("");
 
     try {
-      // We use your FastAPI backend login endpoint
-      // Ensure the URL matches your backend port (usually 8000)
       const response = await fetch("/api/login", {
         method: "POST",
         headers: {
