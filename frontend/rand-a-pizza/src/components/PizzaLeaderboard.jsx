@@ -6,9 +6,13 @@ import { supabase } from "./supabase";
 function PizzaLeaderboard() {
   const [topPizzas, setTopPizzas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [votedPizzas, setVotedPizzas] = useState([]);
 
   useEffect(() => {
     fetchPizzas();
+
+    const storedVotes = JSON.parse(localStorage.getItem("votedPizzas")) || [];
+    setVotedPizzas(storedVotes);
   }, []);
 
   const fetchPizzas = async () => {
@@ -39,17 +43,22 @@ function PizzaLeaderboard() {
 
   // 1. UPDATED VOTING LOGIC
   const handleVote = async (id, currentVotes, isYes) => {
-    // Calculate new vote count
-    // If Yes: +1
-    // If No: -1 (but ensure it doesn't go below 0)
-    const newVotes = isYes ? currentVotes + 1 : Math.max(0, currentVotes - 1);
+    if (votedPizzas.includes(id)) {
+      alert("You have already voted for this pizza!");
+      return;
+    }
 
-    // Optimistic UI Update (Change screen immediately)
+    const newVotes = isYes ? currentVotes + 1 : Math.max(0, currentVotes -1);
+
     setTopPizzas((prev) =>
       prev.map((pizza) =>
-        pizza.id === id ? { ...pizza, votes: newVotes } : pizza,
+        pizza.id === id ? { ...pizza, votes: newVotes} : pizza,
       ),
     );
+
+    const newVotedList = [...votedPizzas, id];
+    setVotedPizzas(newVotedList);
+    localStorage.setItem("votedPizzas", JSON.stringify(newVotedList));
 
     // Update Database
     const { error } = await supabase
@@ -71,44 +80,53 @@ function PizzaLeaderboard() {
       <h1>Community Favorites 🔥</h1>
       <h4>Vote for your favorite pizza creations!</h4>
       <div className="pizza-grid">
-        {topPizzas.map((pizza) => (
-          <div key={pizza.id} className="pizza-card">
-            {/* Visual */}
-            <div className="card-visual-wrapper">
-              <PizzaVisual
-                dough={pizza.dough}
-                cheese={pizza.cheese}
-                toppings={pizza.toppings}
-                scale={1}
-              />
-            </div>
+        {topPizzas.map((pizza) => {
+          // Helper to check if this specific card is voted
+          const hasVoted = votedPizzas.includes(pizza.id);
 
-            {/* 2. INGREDIENTS LIST */}
-            <div className="card-ingredients">
-              <span className="ing-tag dough">{pizza.dough?.name}</span>
-              <span className="ing-tag cheese">{pizza.cheese?.name}</span>
-              {pizza.toppings?.map((t) => (
-                <span key={t.id} className="ing-tag topping">
-                  {t.name}
-                </span>
-              ))}
-            </div>
+          return (
+            <div key={pizza.id} className="pizza-card">
+              <div className="card-visual-wrapper">
+                <PizzaVisual
+                  dough={pizza.dough}
+                  cheese={pizza.cheese}
+                  toppings={pizza.toppings}
+                  scale={1}
+                />
+              </div>
 
-            <div className="card-info">
-              <h3>{pizza.name}</h3>
-              <div className="vote-count">Votes: {pizza.votes}</div>
+              <div className="card-ingredients">
+                <span className="ing-tag dough">{pizza.dough?.name}</span>
+                <span className="ing-tag cheese">{pizza.cheese?.name}</span>
+                {pizza.toppings?.map((t) => (
+                  <span key={t.id} className="ing-tag topping">
+                    {t.name}
+                  </span>
+                ))}
+              </div>
 
-              <div className="vote-buttons">
-                <button
-                  className="vote-btn yes"
-                  onClick={() => handleVote(pizza.id, pizza.votes, true)}
-                >
-                  👍 Vote
-                </button>
+              <div className="card-info">
+                <h3>{pizza.name}</h3>
+                <div className="vote-count">Votes: {pizza.votes}</div>
+
+                <div className="vote-buttons">
+                  <button
+                    className={`vote-btn yes ${hasVoted ? "disabled" : ""}`}
+                    // CHANGE 4: Disable button logic
+                    onClick={() => !hasVoted && handleVote(pizza.id, pizza.votes, true)}
+                    disabled={hasVoted}
+                    style={{
+                        opacity: hasVoted ? 0.5 : 1,
+                        cursor: hasVoted ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {hasVoted ? "✅ Voted" : "👍 Vote"}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

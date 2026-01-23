@@ -3,9 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import os
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from fastapi import Depends
+import time
 import random
 from dotenv import load_dotenv
+from collections import Counter
 
 app = FastAPI(title="Rand-A-Pizza API")
 
@@ -44,6 +47,77 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+class UserCredentials(BaseModel):
+    email: str
+    password: str
+
+class ProfileData(BaseModel):
+    email: Optional[str] = None
+    company: Optional[str] = None
+    
+    # Add other profile fields as needed
+
+def get_current_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = authorization[7:]
+    user = supabase.auth.get_user(token)
+    if user.user is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return user.user
+
+@app.post("/api/register")
+def register_user(user: UserCredentials, request: Request):
+    try:
+        host = request.headers.get("x-forwarded-host") or request.headers.get("X-Frontend-URL") or request.headers.get("host") or "localhost:3000"
+        scheme = request.headers.get("x-forwarded-proto", "http")
+        base_url = f"{scheme}://{host}"
+        redirect_url = f"{base_url}/emailconfirmed"
+
+        result = supabase.auth.sign_up(
+            {
+                "email": user.email,
+                "password": user.password,
+                "options": {
+                    "email_redirect_to": redirect_url
+                }
+            }
+        )
+        if result.user is None:
+            raise HTTPException(status_code=400, detail="Registration failed")
+        return {"message": "User registered", "id": result.user.id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/login")
+def login_user(user: UserCredentials):
+    try:
+        result = supabase.auth.sign_in_with_password({"email": user.email, "password": user.password})
+        if result.session is None:
+            raise HTTPException(status_code=401, detail="Login failed")
+        return {"access_token": result.session.access_token}
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+@app.get("/api/profile")
+def get_profile(user=Depends(get_current_user)):
+    uid = user.id
+    response = supabase.table("userdata").select("*").eq("user_id", uid).maybe_single().execute()
+    data = getattr(response, "data", None)
+
+    if not data:
+        placeholder = {
+            "user_id": uid,
+            "email": user.email,
+            "company": "Please fill in your company",
+        }
+        supabase.table("userdata").insert(placeholder).execute()
+        time.sleep(1)
+        response = supabase.table("userdata").select("*").eq("user_id", uid).maybe_single().execute()
+        data = getattr(response, "data", None)
+
+    return data
 
 # Pydantic models
 class IngredientsRequest(BaseModel):
@@ -127,3 +201,57 @@ def get_user_recipes(user_id: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    
+@app.get("/api/business/stats")
+def get_dashboard_stats(user=Depends(get_current_user)):
+    response = supabase.table("pizza_recipes").select("*").execute()
+    recipes = response.data
+
+    if not recipes:
+        return {"total_pizzas": 0, "top_toppings": [], "vote_distribution": []}
+
+    # 2. Aggregate Data
+    total_pizzas = len(recipes)
+    total_votes = sum(r.get('votes', 0) for r in recipes)
+
+    topping_counter = Counter()
+    for r in recipes:
+        toppings = r.get("toppings", [])
+        if isinstance(toppings, list):
+            for t in toppings:
+                name = t.get("name") if isinstance(t, dict) else t
+                if name:
+                    topping_counter[name] += 1
+
+    top_toppings = [{"name": k, "count": v} for k, v in topping_counter.most_common(5)]
+
+    sorted_by_votes = sorted(recipes, key=lambda x: x.get("votes", 0), reverse=True)[:5]
+    vote_distribution = [
+        {"name": r.get("name", f"Pizza #{r.get('id')}"), "votes": r.get("votes", 0)} 
+        for r in sorted_by_votes
+    ]
+
+    sorted_by_votes = sorted(recipes, key=lambda x: x.get("votes", 0), reverse=True)[:5]
+
+    vote_distribution = []
+    for r in sorted_by_votes:
+        # Extract full ingredient objects (with id and name)
+        dough_obj = r.get("dough", {})
+        cheese_obj = r.get("cheese", {})
+        toppings_list = r.get("toppings", [])
+
+        # Build the detailed object with full ingredient data
+        vote_distribution.append({
+            "name": r.get("name", f"Pizza #{r.get('id')}"), 
+            "votes": r.get("votes", 0),
+            "dough": dough_obj,
+            "cheese": cheese_obj,
+            "toppings": toppings_list
+        })
+
+    return {
+        "total_pizzas": total_pizzas,
+        "total_votes": total_votes,
+        "top_toppings": top_toppings,
+        "vote_distribution": vote_distribution
+    }

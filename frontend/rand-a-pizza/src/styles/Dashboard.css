@@ -1,0 +1,83 @@
+.selected-pizza-card {
+  background: #1f1f1f;
+  border: 2px solid #1f1f1f;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
+  min-width: 0;
+  max-width: 100%;
+
+}
+
+.card-visual-wrapper {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* --- New Styles for Ingredients --- */
+.card-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 5px;
+  margin-bottom: 1rem;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ing-tag {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ing-tag.dough {
+  background-color: #f5e6ca; /* Wheat color */
+  color: #5d4037;
+}
+
+.ing-tag.cheese {
+  background-color: #fff9c4; /* Light Yellow */
+  color: #fbc02d;
+}
+
+.ing-tag.topping {
+  background-color: #ffebee; /* Light Red */
+  color: #c62828;
+}
+/* ---------------------------------- */
+
+.card-info {
+  width: 100%;
+  max-width: 100%;
+  text-align: start;
+}
+
+.card-info h3 {
+  margin: 0.5rem 0;
+  font-size: 1.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vote-count {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
